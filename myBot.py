@@ -1,8 +1,13 @@
+#!/usr/bin/python
+
 # Настройки
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
+with open('myToken') as f:
+    myToken = f.read()
+
 updater = Updater(
-    token='595048222:AAG5LA-AgErHKmJlipYhEVNWOSFVT89pRkw')  # Токен API к Telegram
+    token=myToken)  # Токен API к Telegram
 dispatcher = updater.dispatcher
 
 
