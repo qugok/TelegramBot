@@ -6,8 +6,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 with open('myToken') as f:
     myToken = f.read().replace('\n', '')
 
-print("\'", myToken, "\'", sep='')
-
 exit()
 
 updater = Updater(
