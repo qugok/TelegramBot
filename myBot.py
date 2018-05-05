@@ -6,8 +6,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 with open('myToken') as f:
     myToken = f.read().replace('\n', '')
 
-exit()
-
 updater = Updater(
     token=myToken)  # Токен API к Telegram
 dispatcher = updater.dispatcher
