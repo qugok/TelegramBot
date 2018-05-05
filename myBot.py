@@ -7,33 +7,33 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 
 def findWiki(query: str) -> str:
-    dict = ""
+    dict = ''
     url = 'http://www.google.com/search?q='
     page = requests.get(url + query)
-    soup = BeautifulSoup(page.text, "html.parser")
-    h3 = soup.find_all("h3", class_="r")
+    soup = BeautifulSoup(page.text, 'html.parser')
+    h3 = soup.find_all('h3', class_='r')
     link = None
     for elem in h3:
         try:
             elem = elem.contents[0]
-            elem = elem["href"]
+            elem = elem['href']
         except:
             pass
-        if "wikipedia" in elem:
+        if 'wikipedia' in elem:
             # print(elem)
-            link = ("https://www.google.com" + elem)
+            link = ('https://www.google.com' + elem)
             break
     if not link:
-        return "Sorry, page not Found"
+        return 'Sorry, page not Found'
     # print(link)
     # print(page.text)
     page = requests.get(link)
-    soup = BeautifulSoup(page.text, "html.parser")
-    text = soup.find(id="mw-content-text")
-    p = text.find("p")
+    soup = BeautifulSoup(page.text, 'html.parser')
+    text = soup.find(id='mw-content-text')
+    p = text.find('p')
     while p is not None:
-        dict += p.get_text() + "\n"
-        p = p.find_next("p")
+        dict += p.get_text() + '\n'
+        p = p.find_next('p')
     # dict = dict.split()
     return dict
 
@@ -60,8 +60,10 @@ def startCommand(bot, update):
 
 def textMessage(bot, update):
     current_message = str(update.message.text)
-    if "найди" in current_message:
-        current_message.replace("найди", '')
+    if 'найди' in current_message:
+        current_message.replace('найди', '')
+        bot.send_message(chat_id=update.message.chat_id,
+                         text='ищу ' + current_message)
         bot.send_message(chat_id=update.message.chat_id,
                          text=findWiki(current_message))
     else:
