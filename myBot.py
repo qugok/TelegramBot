@@ -13,7 +13,11 @@ def findWiki(query: str) -> str:
     soup = BeautifulSoup(page.text, 'html.parser')
     h3 = soup.find_all('h3', class_='r')
     link = None
+    index = 0
+    print(len(h3))
     for elem in h3:
+        print(index, end='\t')
+        index += 1
         try:
             elem = elem.contents[0]
             elem = elem['href']
@@ -24,8 +28,9 @@ def findWiki(query: str) -> str:
             link = ('https://www.google.com' + elem)
             break
     if not link:
+        print('Sorry, page not Found')
         return 'Sorry, page not Found'
-    # print(link)
+    print(link)
     # print(page.text)
     page = requests.get(link)
     soup = BeautifulSoup(page.text, 'html.parser')
@@ -61,7 +66,7 @@ def startCommand(bot, update):
 def textMessage(bot, update):
     current_message = str(update.message.text)
     if 'найди' in current_message:
-        current_message = current_message.replace('найди', '')
+        current_message = current_message.replace('найди ', '')
         bot.send_message(chat_id=update.message.chat_id,
                          text='ищу ' + current_message)
         bot.send_message(chat_id=update.message.chat_id,
