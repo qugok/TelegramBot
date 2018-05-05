@@ -82,6 +82,7 @@ def startCommand(bot, update):
     bot.send_message(chat_id=update.message.chat_id,
                      text=start_message)
     log.write('from' + update.message.chat_id + "start command\n")
+    print('start logged')
 
 
 def textMessage(bot, update):
@@ -94,6 +95,7 @@ def textMessage(bot, update):
         #                  text='ищу ' + current_message)
         bot.send_message(chat_id=update.message.chat_id,
                          text=findWiki(current_message))
+        log.write('message send\n')
         print("message send")
 
     else:
