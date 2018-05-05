@@ -26,6 +26,7 @@ class Log:
 
 log = Log()
 
+
 def findWiki(query: str) -> str:
     dict = ''
     url = 'http://www.google.ru/search?q='
@@ -73,7 +74,6 @@ with open('myToken') as f:
 with open('messages/start_message', encoding='utf-8') as f:
     start_message = f.read()
 
-
 # print(start_message)
 # exit()
 
@@ -95,12 +95,15 @@ def textMessage(bot, update):
     current_message = str(update.message.text)
     if 'найди' in current_message:
         current_message = current_message.replace('найди', '')
+        print("find log start")
         log.write(
             'from' + update.message.chat_id + "find command with \t" + current_message + "\n")
+        print("find logged")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
         bot.send_message(chat_id=update.message.chat_id,
                          text=findWiki(current_message))
+        print("send log start")
         log.write('message send\n')
         print("message send")
 
