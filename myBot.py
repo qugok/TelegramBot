@@ -96,6 +96,7 @@ def textMessage(bot, update):
     if 'найди' in current_message:
         current_message = current_message.replace('найди', '')
         print("find log start")
+        print(str(current_message))
         log.write(
             'from' + str(update.message.chat_id) + "find command with \t"
             + str(current_message) + "\n")
