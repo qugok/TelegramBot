@@ -14,8 +14,11 @@ def findWiki(query: str) -> str:
     h3 = soup.find_all("h3", class_="r")
     link = None
     for elem in h3:
-        elem = elem.contents[0]
-        elem = elem["href"]
+        try:
+            elem = elem.contents[0]
+            elem = elem["href"]
+        except:
+            pass
         if "wikipedia" in elem:
             # print(elem)
             link = ("https://www.google.com" + elem)
