@@ -12,13 +12,13 @@ class Log:
     def __init__(self):
         self.__file = 'logfile-' + str(
             time.strftime("%d-%m-%Y-%H.%M.%S")) + '.txt'
-        with open(self.__file, 'x'):
+        with open(self.__file, 'x', encoding='utf-8'):
             pass
         self.write("started")
 
     def write(self, info: str):
         print("start open")
-        with open(self.__file, 'w') as file:
+        with open(self.__file, 'w', encoding='utf-8') as file:
             print("start log")
             file.write(info)
             print("end log")
@@ -87,7 +87,7 @@ def startCommand(bot, update):
     bot.send_message(chat_id=update.message.chat_id,
                      text=start_message)
     print("pre logging")
-    log.write(str('from' + update.message.chat_id + "start command\n"))
+    log.write(str('from' + str(update.message.chat_id) + "start command\n"))
     print('start logged')
 
 
