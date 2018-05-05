@@ -14,6 +14,7 @@ class Log:
             time.strftime("%d-%m-%Y-%H.%M.%S")) + '.txt'
         with open(self.__file, 'x'):
             pass
+        self.write("started")
 
     def write(self, info: str):
         print("start open")
@@ -22,6 +23,8 @@ class Log:
             file.write(info)
             print("end log")
 
+
+log = Log()
 
 def findWiki(query: str) -> str:
     dict = ''
@@ -70,7 +73,6 @@ with open('myToken') as f:
 with open('messages/start_message', encoding='utf-8') as f:
     start_message = f.read()
 
-log = Log()
 
 # print(start_message)
 # exit()
