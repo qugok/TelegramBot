@@ -16,6 +16,7 @@ class Log:
             pass
 
     def write(self, info: str):
+        print("start open")
         with open(self.__file, 'a') as file:
             print("start log")
             file.write(info)
