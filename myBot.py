@@ -1,14 +1,28 @@
 #!/usr/bin/python3
 
+import time
+
 import requests
 from bs4 import BeautifulSoup
 # Настройки
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 
+class Log:
+    def __init__(self):
+        self.__file = 'logfile-' + str(
+            time.strftime("%d-%m-%Y-%H.%M.%S")) + '.txt'
+        with open(self.__file, 'x'):
+            pass
+
+    def write(self, info: str):
+        with open(self.__file, 'a') as file:
+            file.write(info)
+
+
 def findWiki(query: str) -> str:
     dict = ''
-    url = 'http://www.google.com/search?q='
+    url = 'http://www.google.ru/search?q='
     page = requests.get(url + query)
     soup = BeautifulSoup(page.text, 'html.parser')
     h3 = soup.find_all('h3', class_='r')
@@ -25,17 +39,20 @@ def findWiki(query: str) -> str:
             pass
         if 'wikipedia' in elem:
             # print(elem)
-            link = ('https://www.google.com' + elem)
+            link = ('https://www.google.ru' + elem)
             break
     if not link:
         print('Sorry, page not Found')
+        log.write('Sorry, page not Found')
         return 'Sorry, page not Found'
     print(link)
+    log.write('link Found\n' + link)
     # print(page.text)
     page = requests.get(link)
     soup = BeautifulSoup(page.text, 'html.parser')
     text = soup.find(id='mw-content-text')
     p = text.find('p')
+    log.write("with text:\n" + p.get_text())
     return p.get_text()
     # while p is not None:
     #     dict += p.get_text()
@@ -50,6 +67,8 @@ with open('myToken') as f:
 with open('messages/start_message', encoding='utf-8') as f:
     start_message = f.read()
 
+log = Log()
+
 # print(start_message)
 # exit()
 
@@ -62,12 +81,15 @@ dispatcher = updater.dispatcher
 def startCommand(bot, update):
     bot.send_message(chat_id=update.message.chat_id,
                      text=start_message)
+    log.write('from' + update.message.chat_id + "start command\n")
 
 
 def textMessage(bot, update):
     current_message = str(update.message.text)
     if 'найди' in current_message:
         current_message = current_message.replace('найди', '')
+        log.write(
+            'from' + update.message.chat_id + "find command with \t" + current_message + "\n")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
         bot.send_message(chat_id=update.message.chat_id,
