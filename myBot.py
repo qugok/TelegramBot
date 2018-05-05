@@ -36,11 +36,12 @@ def findWiki(query: str) -> str:
     soup = BeautifulSoup(page.text, 'html.parser')
     text = soup.find(id='mw-content-text')
     p = text.find('p')
-    while p is not None:
-        dict += p.get_text() + '\n'
-        p = p.find_next('p')
-    # dict = dict.split()
-    return dict
+    return p.get_text()
+    # while p is not None:
+    #     dict += p.get_text()
+    #     p = p.find_next('p')
+    # # dict = dict.split()
+    # return dict
 
 
 with open('myToken') as f:
@@ -66,7 +67,7 @@ def startCommand(bot, update):
 def textMessage(bot, update):
     current_message = str(update.message.text)
     if 'найди' in current_message:
-        current_message = current_message.replace('найди ', '')
+        current_message = current_message.replace('найди', '')
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
         bot.send_message(chat_id=update.message.chat_id,
