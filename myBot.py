@@ -17,7 +17,9 @@ class Log:
 
     def write(self, info: str):
         with open(self.__file, 'a') as file:
+            print("start log")
             file.write(info)
+            print("end log")
 
 
 def findWiki(query: str) -> str:
