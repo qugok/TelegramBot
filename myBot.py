@@ -83,6 +83,7 @@ dispatcher = updater.dispatcher
 def startCommand(bot, update):
     bot.send_message(chat_id=update.message.chat_id,
                      text=start_message)
+    print("pre logging")
     log.write('from' + update.message.chat_id + "start command\n")
     print('start logged')
 
