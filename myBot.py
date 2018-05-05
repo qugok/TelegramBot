@@ -67,10 +67,12 @@ def textMessage(bot, update):
     current_message = str(update.message.text)
     if 'найди' in current_message:
         current_message = current_message.replace('найди ', '')
-        bot.send_message(chat_id=update.message.chat_id,
-                         text='ищу ' + current_message)
+        # bot.send_message(chat_id=update.message.chat_id,
+        #                  text='ищу ' + current_message)
         bot.send_message(chat_id=update.message.chat_id,
                          text=findWiki(current_message))
+        print("message send")
+
     else:
         response = 'Получил Ваше сообщение: ' + update.message.text
         bot.send_message(chat_id=update.message.chat_id, text=response)
