@@ -97,7 +97,8 @@ def textMessage(bot, update):
         current_message = current_message.replace('найди', '')
         print("find log start")
         log.write(
-            'from' + update.message.chat_id + "find command with \t" + current_message + "\n")
+            'from' + str(update.message.chat_id) + "find command with \t"
+            + str(current_message) + "\n")
         print("find logged")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
