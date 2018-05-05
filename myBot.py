@@ -18,7 +18,7 @@ class Log:
 
     def write(self, info: str):
         print("\nstart open")
-        with open(self.__file, 'w', encoding='utf-8') as file:
+        with open(self.__file, 'a', encoding='utf-8') as file:
             print("start log")
             file.write(info)
             print("end log")
