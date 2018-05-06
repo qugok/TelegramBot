@@ -68,6 +68,7 @@ class Wiki:
         soup = BeautifulSoup(page.text, 'html.parser')
         text = soup.find(id='mw-content-text')
         p = text.find('p')
+        print('pre log')
         if self.__log is not None:
             self.__log.write("Found text:\n" + p.get_text())
         return p.get_text()
