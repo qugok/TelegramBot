@@ -20,7 +20,7 @@ class Log:
         print("\nstart open")
         with open(self.__file, 'a', encoding='utf-8') as file:
             print("start log")
-            file.write(info)
+            file.write(info + '\n')
             print("end log")
 
 
@@ -87,7 +87,7 @@ def startCommand(bot, update):
     bot.send_message(chat_id=update.message.chat_id,
                      text=start_message)
     print("pre logging")
-    log.write(str('from' + str(update.message.chat_id) + "start command\n"))
+    log.write(str('from ' + str(update.message.chat_id) + " start command\n"))
     print('start logged')
 
 
@@ -98,8 +98,8 @@ def textMessage(bot, update):
         print("find log start")
         print(str(current_message))
         log.write(
-            'from' + str(update.message.chat_id) + "find command with \t"
-            + str(current_message) + "\n")
+            'from ' + str(update.message.chat_id) + " find command with \t"
+            + str(current_message))
         print("find logged")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
