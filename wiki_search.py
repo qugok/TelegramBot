@@ -31,6 +31,7 @@ class Wiki:
     def find_link(self, query: str) -> str:
         dict = ''
         page = requests.get(self.__url + query)
+        print(self.__url + query)
         soup = BeautifulSoup(page.text, 'html.parser')
         h3 = soup.find_all('h3', class_='r')
         link = None
@@ -62,7 +63,7 @@ class Wiki:
     def get_text(self):
         if self.__link is None:
             return 'Sorry, not Found'
-        # print(page.text)
+        print(self.__link)
         page = requests.get(self.__link)
         soup = BeautifulSoup(page.text, 'html.parser')
         text = soup.find(id='mw-content-text')
