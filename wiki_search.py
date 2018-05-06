@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 class Wiki:
 
     def __init__(self, language: str = 'ru', log=None):
+        self.__link = None
         self.__log = log
         if len(language) == 2:
             self.__url = 'https://www.google.ru/search?q=site%3A' + language.lower() + '.wikipedia.com+'
@@ -53,19 +54,21 @@ class Wiki:
             self.__link = None
             return 'Sorry, not Found'
         # print(link)
-        self.__log.write('link Found\n' + link)
+        if self.__log is not None:
+            self.__log.write('link Found\n' + link)
         self.__link = link
         return link
 
     def get_text(self):
-        if '__link' not in self.__dict__ or self.__link is None:
+        if self.__link is None:
             return 'Sorry, not Found'
         # print(page.text)
         page = requests.get(self.__link)
         soup = BeautifulSoup(page.text, 'html.parser')
         text = soup.find(id='mw-content-text')
         p = text.find('p')
-        self.__log.write("Found text:\n" + p.get_text())
+        if self.__log is not None:
+            self.__log.write("Found text:\n" + p.get_text())
         return p.get_text()
 
 # def findWiki(query: str, log=None) -> str:
