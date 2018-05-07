@@ -3,7 +3,7 @@ import time
 
 class Log:
     def __init__(self):
-        self.__file = 'logfile-' + str(
+        self.__file = 'log/logfile-' + str(
             time.strftime("%d-%m-%Y-%H.%M.%S")) + '.txt'
         with open(self.__file, 'x', encoding='utf-8'):
             pass
