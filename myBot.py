@@ -1,11 +1,13 @@
 #!/usr/bin/python3
+import collections
 import time
 
 # Настройки
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import my_read
-from wiki_search import Wiki
+# from wiki_search import Wiki
+from wiki_search_v2 import Wiki
 from Log import Log
 
 myToken = my_read.read_telegram_token()
@@ -61,15 +63,19 @@ def textMessage(bot, update):
             'from ' + str(
                 update.message.chat_id) + ' named ' + name + " find command with \t"
             + str(current_message))
-        print("find logged")
+        # print("find logged")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
-        print(wikies[update.message.chat_id])
+        # print(wikies[update.message.chat_id])
         link = wikies[update.message.chat_id].find_link(current_message)
-        print(link)
-        bot.send_message(chat_id=update.message.chat_id,
-                         text=link + '\n' + wikies[update.message.chat_id].get_text())
-        print("send log start")
+        code = wikies[update.message.chat_id].find(current_message)
+        log.write(current_message + ' found with code ' + code)
+        if code == 'OK' or code is None:
+            bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
+        else:
+            wikies[update.message.chat_id].find(wikies[update.message.chat_id].maybe[0])
+            bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
+        log.write('message ' + wikies[update.message.chat_id].text + ' send to ' + name)
         log.write('message send\n')
         print("message send")
 
