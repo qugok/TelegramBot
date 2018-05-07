@@ -6,23 +6,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import my_read
 from wiki_search import Wiki
-
-
-class Log:
-    def __init__(self):
-        self.__file = 'logfile-' + str(
-            time.strftime("%d-%m-%Y-%H.%M.%S")) + '.txt'
-        with open(self.__file, 'x', encoding='utf-8'):
-            pass
-        self.write("started")
-
-    def write(self, info: str):
-        print("\nstart open")
-        with open(self.__file, 'a', encoding='utf-8') as file:
-            print("start log")
-            file.write(info + '\n')
-            print("end log")
-
+from Log import Log
 
 myToken = my_read.read_telegram_token()
 start_message = my_read.read_message('start_message')
@@ -80,9 +64,9 @@ def textMessage(bot, update):
         print("find logged")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
-        wikies[update.message.chat_id].find_link(current_message)
+        link = wikies[update.message.chat_id].find_link(current_message)
         bot.send_message(chat_id=update.message.chat_id,
-                         text=wikies[update.message.chat_id].get_text())
+                         text=link + '\n' + wikies[update.message.chat_id].get_text())
         print("send log start")
         log.write('message send\n')
         print("message send")

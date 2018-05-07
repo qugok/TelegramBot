@@ -1,10 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 
+from Log import Log
+
 
 class Wiki:
 
-    def __init__(self, language: str = 'ru', log=None):
+    def __init__(self, language: str = 'ru', log: Log = None):
         self.__link = None
         self.__log = log
         if len(language) == 2:
@@ -72,6 +74,8 @@ class Wiki:
         if self.__log is not None:
             self.__log.write("Found text:\n" + p.get_text())
         return p.get_text()
+
+
 
 # def findWiki(query: str, log=None) -> str:
 #     dict = ''
