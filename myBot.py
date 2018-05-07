@@ -64,7 +64,9 @@ def textMessage(bot, update):
         print("find logged")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
+        print(wikies[update.message.chat_id])
         link = wikies[update.message.chat_id].find_link(current_message)
+        print(link)
         bot.send_message(chat_id=update.message.chat_id,
                          text=link + '\n' + wikies[update.message.chat_id].get_text())
         print("send log start")

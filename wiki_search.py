@@ -36,6 +36,7 @@ class Wiki:
         dict = ''
         # page = requests.get(self.__url + query,
         #                     params=[('accept-language', 'en')])
+        print(query)
         page = requests.get(self.__url + query)
         print(self.__url + query)
         soup = BeautifulSoup(page.text, 'html.parser')
@@ -80,6 +81,9 @@ class Wiki:
         if self.__log is not None:
             self.__log.write("Found text:\n" + p.get_text())
         return p.get_text()
+
+    def __str__(self):
+        return str(self.__dict__)
 
 # def findWiki(query: str, log=None) -> str:
 #     dict = ''
