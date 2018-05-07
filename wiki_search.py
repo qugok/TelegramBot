@@ -1,3 +1,5 @@
+import re
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -32,6 +34,8 @@ class Wiki:
 
     def find_link(self, query: str) -> str:
         dict = ''
+        # page = requests.get(self.__url + query,
+        #                     params=[('accept-language', 'en')])
         page = requests.get(self.__url + query)
         print(self.__url + query)
         soup = BeautifulSoup(page.text, 'html.parser')
@@ -48,8 +52,10 @@ class Wiki:
             except:
                 pass
             if 'wikipedia' in elem:
-                # print(elem)
-                link = ('https://www.google.ru' + elem)
+                # print(str(elem))
+                # print("'", re.search(r'=(.*?)&', str(elem)).groups()[0], "'")
+                link = re.search(r'=(.*?)&', str(elem)).groups()[0]
+                # link = ('https://www.google.ru' + elem)
                 break
         if not link:
             # print('Sorry, not Found')
@@ -74,8 +80,6 @@ class Wiki:
         if self.__log is not None:
             self.__log.write("Found text:\n" + p.get_text())
         return p.get_text()
-
-
 
 # def findWiki(query: str, log=None) -> str:
 #     dict = ''
