@@ -67,13 +67,15 @@ def textMessage(bot, update):
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
         # print(wikies[update.message.chat_id])
-        link = wikies[update.message.chat_id].find_link(current_message)
+        # link = wikies[update.message.chat_id].find_link(current_message)
         code = wikies[update.message.chat_id].find(current_message)
+        print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
         log.write(current_message + ' found with code ' + code)
         if code == 'OK' or code is None:
             bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
         else:
             wikies[update.message.chat_id].find(wikies[update.message.chat_id].maybe[0])
+            print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
             bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
         log.write('message ' + wikies[update.message.chat_id].text + ' send to ' + name)
         log.write('message send\n')
