@@ -46,8 +46,8 @@ def getName(update):
         return 'unknown'
 
 
-default_wiki = Wiki()
-wikies = collections.defaultdict(default_wiki)
+# default_wiki = Wiki()
+wikies = collections.defaultdict(Wiki)
 
 
 # Обработка команд
