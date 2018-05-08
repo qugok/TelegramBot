@@ -23,10 +23,10 @@ class Wiki:
             return 'ERROR'
 
     def find(self, query: str):
-        wikipedia.set_lang(self.lang)
         self.suggest = None
         try:
             # print('start finding')
+            wikipedia.set_lang(self.lang)
             self.text = wikipedia.summary(query)
             self.suggest = wikipedia.suggest(query)
             return 'OK'
@@ -37,7 +37,7 @@ class Wiki:
             return 'OPTIONS'
             # raise e
         except wikipedia.exceptions.PageError:
-            print('not found')
+            # print('not found')
             self.text = 'Page not found'
             return None
 
