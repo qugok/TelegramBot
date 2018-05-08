@@ -11,7 +11,7 @@ from Log import Log
 from wiki_search_v2 import Wiki
 
 myToken = my_read.read_telegram_token()
-start_message = my_read.read_message('start_message')
+start_message = my_read.read_message('old_start_message')
 
 log = Log()
 
