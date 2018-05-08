@@ -11,7 +11,7 @@ class Wiki:
         self.__log = log
         self.text = None
         self.maybe = []
-        self.page = None
+        self.suggest = None
 
     def set_lang(self, lang: str = 'ru'):
         try:
@@ -24,10 +24,11 @@ class Wiki:
 
     def find(self, query: str):
         wikipedia.set_lang(self.lang)
+        self.suggest = None
         try:
             # print('start finding')
-            self.page = wikipedia.page(query)
-            self.text = self.page.summary
+            self.text = wikipedia.summary(query)
+            self.suggest = wikipedia.suggest(query)
             return 'OK'
         except wikipedia.exceptions.DisambiguationError as e:
             # print('Too many options')

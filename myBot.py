@@ -1,14 +1,12 @@
 #!/usr/bin/python3
-import collections
-import time
 
 # Настройки
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import my_read
+from Log import Log
 # from wiki_search import Wiki
 from wiki_search_v2 import Wiki
-from Log import Log
 
 myToken = my_read.read_telegram_token()
 start_message = my_read.read_message('start_message')
@@ -40,6 +38,7 @@ def getName(update):
 
 wikies = {}
 
+
 # Обработка команд
 def startCommand(bot, update):
     name = getName(update)
@@ -68,17 +67,25 @@ def textMessage(bot, update):
         #                  text='ищу ' + current_message)
         # print(wikies[update.message.chat_id])
         # link = wikies[update.message.chat_id].find_link(current_message)
-        code = wikies[update.message.chat_id].find(current_message)
+        current_wiki = wikies[update.message.chat_id]
+        code = current_wiki.find(current_message)
         # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
         log.write(current_message + ' found with code ' + code)
         if code == 'OK' or code is None:
-            bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
+            if current_wiki.suggest is None:
+                bot.send_message(chat_id=update.message.chat_id,
+                                 text=current_wiki.text)
+            else:
+                bot.send_message(chat_id=update.message.chat_id,
+                                 text='you mean ' + current_wiki.suggest + '?\n' + current_wiki.text)
         else:
             # wikies[update.message.chat_id].find(wikies[update.message.chat_id].maybe[0])
             # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
             # bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
-            bot.send_message(chat_id=update.message.chat_id, text=str(wikies[update.message.chat_id].maybe[:20]))
-        log.write('message ' + wikies[update.message.chat_id].text + ' send to ' + name)
+            bot.send_message(chat_id=update.message.chat_id, text=str(
+                wikies[update.message.chat_id].maybe[:20]))
+        log.write('message ' + wikies[
+            update.message.chat_id].text + ' send to ' + name)
         log.write('message send\n')
         # print("message send")
 
