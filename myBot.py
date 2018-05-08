@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 # Настройки
+import collections
+
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 import my_read
@@ -44,7 +46,8 @@ def getName(update):
         return 'unknown'
 
 
-wikies = {}
+default_wiki = Wiki()
+wikies = collections.defaultdict(default_wiki)
 
 
 # Обработка команд
