@@ -84,20 +84,27 @@ def textMessage(bot, update):
         log.write(current_message + ' found with code ' + str(code))
         if code == 'OK' or code is None:
             if current_wiki.suggest is None:
-                log.write('without suggestion with text' + str(current_wiki.text))
+                log.write('without suggestion with text' + "'" + str(
+                    current_wiki.text) + "'")
                 bot.send_message(chat_id=update.message.chat_id,
                                  text=str(current_wiki.text))
             else:
-                log.write('with suggestion ' + str(current_wiki.suggest)+  'with text' + str(current_wiki.text))
+                log.write('with suggestion ' + str(
+                    current_wiki.suggest) + 'with text' + str(
+                    current_wiki.text))
                 bot.send_message(chat_id=update.message.chat_id,
-                                 text='you mean ' + str(current_wiki.suggest) + '?\n' + str(current_wiki.text))
+                                 text='you mean ' + str(
+                                     current_wiki.suggest) + '?\n' + str(
+                                     current_wiki.text))
         else:
             # wikies[update.message.chat_id].find(wikies[update.message.chat_id].maybe[0])
             # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
             # bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
-            bot.send_message(chat_id=update.message.chat_id, text='what do you mean?\n'+my_str(*wikies[update.message.chat_id].maybe[:20]))
-        log.write('message ' + wikies[
-            update.message.chat_id].text + ' send to ' + name)
+            bot.send_message(chat_id=update.message.chat_id,
+                             text='what do you mean?\n' + my_str(
+                                 *wikies[update.message.chat_id].maybe[:20]))
+        log.write('message ' + "'" + str(wikies[
+                                             update.message.chat_id].text) + "'" + ' send to ' + name)
         log.write('message send\n')
         # print("message send")
 
