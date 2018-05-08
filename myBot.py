@@ -78,7 +78,7 @@ def textMessage(bot, update):
         current_wiki = wikies[update.message.chat_id]
         code = current_wiki.find(current_message)
         # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
-        log.write(current_message + ' found with code ' + code)
+        log.write(current_message + ' found with code ' + str(code))
         if code == 'OK' or code is None:
             if current_wiki.suggest is None:
                 bot.send_message(chat_id=update.message.chat_id,
