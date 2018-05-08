@@ -25,12 +25,12 @@ class Wiki:
     def find(self, query: str):
         wikipedia.set_lang(self.lang)
         try:
-            print('start finding')
+            # print('start finding')
             self.page = wikipedia.page(query)
             self.text = self.page.summary
             return 'OK'
         except wikipedia.exceptions.DisambiguationError as e:
-            print('Too many options')
+            # print('Too many options')
             self.maybe = e.options
             self.text = 'Too many options\nPlease more definitely'
             return 'OPTIONS'
