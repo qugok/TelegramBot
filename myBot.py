@@ -63,7 +63,7 @@ def textMessage(bot, update):
             'from ' + str(
                 update.message.chat_id) + ' named ' + name + " find command with \t"
             + str(current_message))
-        # print("find logged")
+        print("find logged")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
         # print(wikies[update.message.chat_id])
