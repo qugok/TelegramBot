@@ -1,5 +1,5 @@
 import wikipedia
-
+import re
 from Log import Log
 
 
@@ -29,6 +29,8 @@ class Wiki:
             wikipedia.set_lang(self.lang)
             self.text = wikipedia.summary(query)
             self.suggest = wikipedia.suggest(query)
+            if self.text == '':
+                self.text = get_facked(query)
             return 'OK'
         except wikipedia.exceptions.DisambiguationError as e:
             # print('Too many options')
@@ -44,6 +46,14 @@ class Wiki:
     def __str__(self):
         # return str(self.__dict__)
         return self.text
+
+def get_facked(query: str):
+    try:
+        paragraph_pattern = re.compile('.*\n')
+        return paragraph_pattern.match(wikipedia.page(query).content).group()
+    except Exception as e:
+        # print(e)
+        return 'Page not found'
 
 # print("1: Searching Wikipedia for 'Orange'")
 # try:
