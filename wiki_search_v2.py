@@ -13,15 +13,18 @@ class Wiki:
 
     def find(self, query: str):
         try:
+            print('start finding')
             self.page = wikipedia.page(query)
-            self.text = wikipedia.page(query).summary
+            self.text = self.page.summary
             return 'OK'
         except wikipedia.exceptions.DisambiguationError as e:
+            print('Too many options')
             self.maybe = e.options
             self.text = 'Too many options\nPlease more definitely'
             return 'OPTIONS'
             # raise e
         except wikipedia.exceptions.PageError:
+            print('not found')
             self.text = 'Page not found'
             return None
 
