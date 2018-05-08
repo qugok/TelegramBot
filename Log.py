@@ -10,8 +10,8 @@ class Log:
         self.write("started")
 
     def write(self, info: str):
-        print("\nstart open")
+        # print("\nstart open")
         with open(self.__file, 'a', encoding='utf-8') as file:
-            print("start log")
+            # print("start log")
             file.write(info + '\n')
-            print("end log")
+            # print("end log")

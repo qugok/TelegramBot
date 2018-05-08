@@ -46,40 +46,40 @@ def startCommand(bot, update):
     bot.send_message(chat_id=update.message.chat_id,
                      text=start_message % name)
     wikies[update.message.chat_id] = Wiki(log=log)
-    print("pre logging")
+    # print("pre logging")
     log.write(str('from ' + str(
         update.message.chat_id) + ' named ' + name + ' start command\n'))
-    print('start logged')
+    # print('start logged')
 
 
 def textMessage(bot, update):
     current_message = str(update.message.text)
     if 'найди' in current_message.lower():
         current_message = current_message.lower().replace('найди', '')
-        print("find log start")
-        print(str(current_message))
+        # print("find log start")
+        # print(str(current_message))
         name = getName(update)
         log.write(
             'from ' + str(
                 update.message.chat_id) + ' named ' + name + " find command with \t"
             + str(current_message))
-        print("find logged")
+        # print("find logged")
         # bot.send_message(chat_id=update.message.chat_id,
         #                  text='ищу ' + current_message)
         # print(wikies[update.message.chat_id])
         # link = wikies[update.message.chat_id].find_link(current_message)
         code = wikies[update.message.chat_id].find(current_message)
-        print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
+        # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
         log.write(current_message + ' found with code ' + code)
         if code == 'OK' or code is None:
             bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
         else:
             wikies[update.message.chat_id].find(wikies[update.message.chat_id].maybe[0])
-            print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
+            # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
             bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
         log.write('message ' + wikies[update.message.chat_id].text + ' send to ' + name)
         log.write('message send\n')
-        print("message send")
+        # print("message send")
 
     else:
         response = 'Получил Ваше сообщение: ' + update.message.text

@@ -5,13 +5,25 @@ from Log import Log
 
 class Wiki:
 
-    def __init__(self, log: Log = None):
+    def __init__(self, lang: str = 'ru', log: Log = None):
+        self.lang = 'ru'
+        self.set_lang(lang)
         self.__log = log
         self.text = None
         self.maybe = []
         self.page = None
 
+    def set_lang(self, lang: str = 'ru'):
+        try:
+            wikipedia.set_lang(lang)
+            self.lang = lang
+            return 'SUCCESSFUL'
+        except:
+            self.lang = 'ru'
+            return 'ERROR'
+
     def find(self, query: str):
+        wikipedia.set_lang(self.lang)
         try:
             print('start finding')
             self.page = wikipedia.page(query)
