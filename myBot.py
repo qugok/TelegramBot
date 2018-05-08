@@ -13,6 +13,14 @@ start_message = my_read.read_message('start_message')
 
 log = Log()
 
+
+def my_str(*args) -> str:
+    ans = ''
+    for i in args:
+        ans += str(i) + '\n'
+    return ans
+
+
 # print(start_message)
 # exit()
 
@@ -82,8 +90,7 @@ def textMessage(bot, update):
             # wikies[update.message.chat_id].find(wikies[update.message.chat_id].maybe[0])
             # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
             # bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
-            bot.send_message(chat_id=update.message.chat_id, text=str(
-                wikies[update.message.chat_id].maybe[:20]))
+            bot.send_message(chat_id=update.message.chat_id, text='what do you mean?\n'+my_str(*wikies[update.message.chat_id].maybe[:20]))
         log.write('message ' + wikies[
             update.message.chat_id].text + ' send to ' + name)
         log.write('message send\n')
