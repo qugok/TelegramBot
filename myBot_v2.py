@@ -109,7 +109,7 @@ def dialog():
             continue
 
         if answer.text.startswith('/help'):
-            answer = yield message(info_find_message)
+            answer = yield info_message
             continue
 
         if answer.text.startswith('/date') or answer.text.lower().startswith(
@@ -126,6 +126,7 @@ def dialog():
             year = int(text.strip('годyear '))
             current = message(str(year), wiki.find_date(year))
             answer = yield current
+            continue
 
 
 def chose_lang(wiki: Wiki):
