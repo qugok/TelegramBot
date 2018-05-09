@@ -96,10 +96,11 @@ def dialog():
             else:
                 text = answer.text[5:]
             if text.strip(' !.();:') == '':
-                text = yield message('Введите то, что хотите найти')
-            print('pre Wiki')
+                answer = yield message('Введите то, что хотите найти')
+            text = answer.text
+            # print('pre Wiki')
             current = message(wiki.fullFind(text))
-            print('post Wiki')
+            # print('post Wiki')
             answer = yield current
             continue
 
