@@ -161,11 +161,11 @@ def dialog():
                     'Вы ввели не только цифры года, попытайтесь с начала)')
                 continue
             year = int(text.strip('годyear '))
-            print(year)
-            print('to send')
-            print(str(year), [i + '\n' + j for i, j in wiki.find_date(year)])
-            answer = yield message(str(year), [i + '\n' + j for i, j in wiki.find_date(year)])
-            print('send')
+            # print(year)
+            # print('to send')
+            # print(str(year), [i + '\n' + j for i, j in wiki.find_date(year)])
+            answer = yield message(str(year), *[i + '\n' + j for i, j in wiki.find_date(year)])
+            # print('send')
             continue
 
         if 'спасибо' in answer.text.lower():
