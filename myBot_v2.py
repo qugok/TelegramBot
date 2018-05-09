@@ -136,6 +136,7 @@ def dialog():
         if 'пожалуйста' in answer.text.lower():
             answer = yield message(
                 'Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
+            continue
 
 
 def chose_lang(wiki: Wiki):
