@@ -77,9 +77,9 @@ help_message = my_read.read_message('help_message')
 chose_lang_html_text = my_read.read_message('chose_lang_message')
 info_date_message = my_read.read_message('info_date_message')
 
-
 chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
 info_message = message(info_find_message, info_date_message)
+
 
 def dialog():
     answer = yield message(start_message)
@@ -87,7 +87,7 @@ def dialog():
     # первую компоненту имени, пишем её с заглавной буквы
     name = answer.text.rstrip(".!").split()[0].capitalize()
     wiki = Wiki(log=log)
-    answer = yield message(info_find_message)
+    answer = yield info_message
     while True:
         if answer.text.startswith('/find') or answer.text.lower().startswith(
                 'найди'):
@@ -121,12 +121,21 @@ def dialog():
             else:
                 text = answer.text[5:]
             if not text.strip('годyear ').isdigit():
-                answer = yield message('Вы ввели не только цифры года, попытайтесь ещё разок)')
+                answer = yield message(
+                    'Вы ввели не только цифры года, попытайтесь ещё разок)')
                 continue
             year = int(text.strip('годyear '))
             current = message(str(year), wiki.find_date(year))
             answer = yield current
             continue
+        if 'спасибо' in answer.text.lower():
+            answer = yield message(
+                'Всегда пожалуйста, %s!\nРад был помочь)' % name)
+            continue
+
+        if 'пожалуйста' in answer.text.lower():
+            answer = yield message(
+                'Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
 
 
 def chose_lang(wiki: Wiki):
