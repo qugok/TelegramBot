@@ -94,6 +94,8 @@ class myBot:
             # диалог только начинается. defaultdict запустит новый генератор для этого
             # чатика, а мы должны будем извлечь первое сообщение с помощью .next()
             # (.send() срабатывает только после первого yield)
+            if chat_id == 75781753:
+                self.handlers[chat_id] = bad_bot
             answer = next(self.handlers[chat_id])
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
@@ -111,7 +113,8 @@ info_date_message = my_read.read_message('info_date_message')
 info_error_message = my_read.read_message('info_error_message')
 # print(info_error_message)
 chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
-info_message = message(info_find_message, info_date_message, info_error_message, parse_mode='HTML')
+info_message = message(info_find_message, info_date_message,
+                       info_error_message, parse_mode='HTML')
 
 
 def dialog():
@@ -164,7 +167,8 @@ def dialog():
             # print(year)
             # print('to send')
             # print(str(year), [i + '\n' + j for i, j in wiki.find_date(year)])
-            answer = yield message(str(year), *[i + '\n' + j for i, j in wiki.find_date(year)])
+            answer = yield message(str(year), *[i + '\n' + j for i, j in
+                                                wiki.find_date(year)])
             # print('send')
             continue
 
@@ -184,8 +188,10 @@ def dialog():
             if text.strip(' !.();:') == '':
                 answer = yield message('Введите ваше сообщение')
                 text = answer.text
-            write_error(name + answer.from_user.first_name + answer.chat_id, str(answer.date), text)
-            answer = yield message('Ваше сообщение было успешно сохранено и создатель в скором времени его обязательно прочитает)')
+            write_error(name + answer.from_user.first_name + answer.chat_id,
+                        str(answer.date), text)
+            answer = yield message(
+                'Ваше сообщение было успешно сохранено и создатель в скором времени его обязательно прочитает)')
             continue
 
         answer = yield info_message.add('Я не понимаю что вы написали(',
@@ -210,6 +216,19 @@ def chose_lang(wiki: Wiki):
             'не удалось смениеть язык на' + lang + 'попробуйте что-то другое')
     # print('end')
     return ans
+
+
+def bad_bot():
+    """
+    специально для Никиты
+    :return:
+    """
+    count = 0
+    while True:
+        yield message('Я с тобой не разговариваю!')
+        count += 1
+        if count % 10 == 0:
+            yield message('Да ты заебал!')
 
 
 if __name__ == "__main__":
