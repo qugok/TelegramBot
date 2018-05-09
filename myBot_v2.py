@@ -95,7 +95,7 @@ class myBot:
             # чатика, а мы должны будем извлечь первое сообщение с помощью .next()
             # (.send() срабатывает только после первого yield)
             if chat_id == 75781753:
-                self.handlers[chat_id] = bad_bot
+                self.handlers[chat_id] = bad_bot()
             answer = next(self.handlers[chat_id])
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
