@@ -134,8 +134,7 @@ def dialog():
             continue
 
         if 'пожалуйста' in answer.text.lower():
-            answer = yield message(
-                'Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
+            answer = yield message('Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
             continue
 
 
