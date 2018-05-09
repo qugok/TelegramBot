@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 # Настройки
-from emoji import emojize
+# from emoji import emojize
 import collections
 
 import telegram
