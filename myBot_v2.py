@@ -137,6 +137,8 @@ def dialog():
             answer = yield message('Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
             continue
 
+        answer = yield info_message.add('Я не понимаю что вы написали(', 'Вот вам подсказка,\nЗдесь всё, что я умею\nВы можете её вызвать командой /help\nУдачи!)')
+
 
 def chose_lang(wiki: Wiki):
     lang = yield chose_lang_message
