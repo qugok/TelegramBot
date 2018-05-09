@@ -130,6 +130,7 @@ def dialog():
 
 def chose_lang(wiki: Wiki):
     lang = yield chose_lang_message
+    lang = lang.text
     if lang.lower().startswith('rus') or lang.lower().startswith('рус'):
         code = 'ru'
     elif lang.lower().startswith('eng') or lang.lower().startswith('анг'):
