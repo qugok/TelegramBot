@@ -120,9 +120,12 @@ def dialog():
                 text = answer.text[10:]
             else:
                 text = answer.text[5:]
+            if text.strip(' !.();:') == '':
+                answer = yield message('Введите год')
+                text = answer.text
             if not text.strip('годyear ').isdigit():
                 answer = yield message(
-                    'Вы ввели не только цифры года, попытайтесь ещё разок)')
+                    'Вы ввели не только цифры года, попытайтесь с начала)')
                 continue
             year = int(text.strip('годyear '))
             current = message(str(year), wiki.find_date(year))
