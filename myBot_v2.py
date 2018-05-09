@@ -3,9 +3,13 @@
 # Настройки
 import collections
 
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import telegram
+from telegram.ext import Updater, MessageHandler, Filters
+
 import my_read
+from wiki_search_v2 import Wiki, Log
+
+log = Log()
 
 
 class message:
@@ -15,8 +19,10 @@ class message:
 
     def send(self, bot: telegram.Bot, chat_id):
         for text in self.texts:
-            bot.sendMessage(chat_id=chat_id, text=text, *self.options)
+            bot.sendMessage(chat_id=chat_id, text=text, **self.options)
 
+    def add(self, *texts: str):
+        return message(*texts, *self.texts, **self.options)
 
 
 class myBot:
@@ -29,6 +35,9 @@ class myBot:
             handler)  # ставим обработчик всех текстовых сообщений
         self.handlers = collections.defaultdict(
             generator)  # заводим мапу "id чата -> генератор"
+
+    def start(self):
+        self.updater.start_polling()
 
     def handle_message(self, bot, update):
         print("Received", update.message)
@@ -53,19 +62,84 @@ class myBot:
             # (.send() срабатывает только после первого yield)
             answer = next(self.handlers[chat_id])
         # отправляем полученный ответ пользователю
-        print("Answer: %r" % answer)
-        bot.sendMessage(chat_id=chat_id, text=answer)
+        # print("Answer: %r" % answer)
+        answer.send(bot, chat_id)
 
+
+telegram_token = my_read.read_telegram_token()
 
 start_message = my_read.read_message('start_message')
+info_find_message = my_read.read_message('info_find_message')
+help_message = my_read.read_message('help_message')
+chose_lang_html_text = my_read.read_message('chose_lang_message')
+info_date_message = my_read.read_message('info_date_message')
+
+
+chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
+info_message = message(info_find_message, info_date_message)
 
 def dialog():
-    answer = yield start_message
+    answer = yield message(start_message)
     # убираем ведущие знаки пунктуации, оставляем только
     # первую компоненту имени, пишем её с заглавной буквы
     name = answer.text.rstrip(".!").split()[0].capitalize()
-    likes_python = yield from ask_yes_or_no("Приятно познакомиться, %s. Вам нравится Питон?" % name)
-    if likes_python:
-        answer = yield from discuss_good_python(name)
+    wiki = Wiki(log=log)
+    answer = yield message(info_find_message)
+    while True:
+        if answer.text.startswith('/find') or answer.text.lower().startswith(
+                'найди'):
+            if answer.text.lower().startswith('найди мне'):
+                text: str = answer.text[9:]
+            else:
+                text: str = answer.text[5:]
+            if text.strip(' !.();:') == '':
+                text = yield message('Введите то, что хотите найти')
+            current = message(wiki.fullFind(text))
+            answer = yield current
+            continue
+
+        if answer.text.startswith('/lang'):
+            answer = yield from chose_lang(wiki)
+            continue
+
+        if answer.text.startswith('/help'):
+            answer = yield message(info_find_message)
+            continue
+
+        if answer.text.startswith('/date') or answer.text.lower().startswith(
+                'что было') or answer.text.lower().startswith('что было в'):
+            if answer.text.lower().startswith('что было'):
+                text: str = answer.text[8:]
+            elif answer.text.lower().startswith('что было в'):
+                text: str = answer.text[10:]
+            else:
+                text: str = answer.text[5:]
+            if not text.strip('годyear ').isdigit():
+                answer = yield message('Вы ввели не только цифры года, попытайтесь ещё разок)')
+                continue
+            year = int(text.strip('годyear '))
+            current = message(str(year), wiki.find_date(year))
+            answer = yield current
+
+
+def chose_lang(wiki: Wiki):
+    lang = yield chose_lang_message
+    if lang.lower().startswith('rus') or lang.lower().startswith('рус'):
+        code = 'ru'
+    elif lang.lower().startswith('eng') or lang.lower().startswith('анг'):
+        code = 'en'
     else:
-        answer = yield from discuss_bad_python(name)
+        code = lang.lower()
+    if code in []:
+        wiki.set_lang(code)
+        ans = yield message(
+            'язык успешно сменен на' + lang.capitalize() + 'with code' + code)
+    else:
+        ans = yield message(
+            'не удалось смениеть язык на' + lang + 'попробуйте что-то другое')
+    return ans
+
+
+if __name__ == "__main__":
+    dialog_bot = myBot(telegram_token, dialog)
+    dialog_bot.start()

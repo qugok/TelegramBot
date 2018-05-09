@@ -1,5 +1,7 @@
-import wikipedia
 import re
+
+import wikipedia
+
 from Log import Log
 
 
@@ -12,6 +14,13 @@ class Wiki:
         self.text = None
         self.maybe = []
         self.suggest = None
+        self.events = None
+
+    def log(self, message: str = None):
+        if Log is None or message is None:
+            pass
+        else:
+            self.__log.write(message)
 
     def set_lang(self, lang: str = 'ru'):
         try:
@@ -43,9 +52,36 @@ class Wiki:
             self.text = 'Page not found'
             return None
 
+    def fullFind(self, query: str):
+
+        code = self.find(query)
+        # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
+        self.log(query + ' found with code ' + str(code))
+        if code == 'OK' or code is None:
+            if self.suggest is None:
+                self.log('without suggestion with text' + "'" + str(self.text) + "'")
+                return str(self.text)
+            else:
+                self.log('with suggestion ' + str(self.suggest) + 'with text' + str(self.text))
+                return 'you mean ' + str(self.suggest) + '?\n' + str(self.text)
+        else:
+            self.log('what do you mean?\n' + '\n'.join(self.maybe[:20]))
+            return 'what do you mean?\n' + '\n'.join(self.maybe[:20])
+
+    def find_date(self, date: int):
+        self.events = None
+        return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
+        # try:
+        #     events = re.search('==.*?\n== ', wikipedia.page(date).content)
+        #
+        #     return 'OK'
+        # except:
+        #     return 'NOT found'
+
     def __str__(self):
         # return str(self.__dict__)
         return self.text
+
 
 def get_facked(query: str):
     try:
@@ -65,5 +101,3 @@ def get_facked(query: str):
 #     print(e)
 #     print('DisambiguationError: The page name is ambiguous')
 # print()
-
-

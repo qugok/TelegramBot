@@ -16,11 +16,7 @@ start_message = my_read.read_message('old_start_message')
 log = Log()
 
 
-def my_str(*args) -> str:
-    ans = ''
-    for i in args:
-        ans += str(i) + '\n'
-    return ans
+
 
 
 # print(start_message)
