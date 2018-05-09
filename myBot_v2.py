@@ -130,7 +130,7 @@ def dialog():
             continue
         if 'спасибо' in answer.text.lower():
             answer = yield message(
-                'Всегда пожалуйста, %s!\nРад был помочь)' % name)
+                'Всегда пожалуйста, %s!\nРад был помочь)' % name, 'Всё для тебя - рассветы и туманы,\nДля тебя - моря и океаны,\nДля тебя - цветочные поляны,\nДля тебя!')
             continue
 
         if 'пожалуйста' in answer.text.lower():
