@@ -89,9 +89,9 @@ def dialog():
         if answer.text.startswith('/find') or answer.text.lower().startswith(
                 'найди'):
             if answer.text.lower().startswith('найди мне'):
-                text: str = answer.text[9:]
+                text = answer.text[9:]
             else:
-                text: str = answer.text[5:]
+                text = answer.text[5:]
             if text.strip(' !.();:') == '':
                 text = yield message('Введите то, что хотите найти')
             current = message(wiki.fullFind(text))
@@ -109,11 +109,11 @@ def dialog():
         if answer.text.startswith('/date') or answer.text.lower().startswith(
                 'что было') or answer.text.lower().startswith('что было в'):
             if answer.text.lower().startswith('что было'):
-                text: str = answer.text[8:]
+                text = answer.text[8:]
             elif answer.text.lower().startswith('что было в'):
-                text: str = answer.text[10:]
+                text = answer.text[10:]
             else:
-                text: str = answer.text[5:]
+                text = answer.text[5:]
             if not text.strip('годyear ').isdigit():
                 answer = yield message('Вы ввели не только цифры года, попытайтесь ещё разок)')
                 continue
