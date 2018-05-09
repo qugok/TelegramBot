@@ -37,10 +37,13 @@ class myBot:
             generator)  # заводим мапу "id чата -> генератор"
 
     def start(self):
-        self.updater.start_polling()
+        # Начинаем поиск обновлений
+        self.updater.start_polling(clean=True)
+        # Останавливаем бота, если были нажаты Ctrl + C
+        self.updater.idle()
 
     def handle_message(self, bot, update):
-        print("Received", update.message)
+        # print("Received", update.message)
         chat_id = update.message.chat_id
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
@@ -94,7 +97,9 @@ def dialog():
                 text = answer.text[5:]
             if text.strip(' !.();:') == '':
                 text = yield message('Введите то, что хотите найти')
+            print('pre Wiki')
             current = message(wiki.fullFind(text))
+            print('post Wiki')
             answer = yield current
             continue
 
