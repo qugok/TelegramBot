@@ -108,7 +108,7 @@ help_message = my_read.read_message('help_message')
 chose_lang_html_text = my_read.read_message('chose_lang_message')
 info_date_message = my_read.read_message('info_date_message')
 info_error_message = my_read.read_message('info_error_message')
-
+# print(info_error_message)
 chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
 info_message = message(info_find_message, info_date_message, info_error_message, parse_mode='HTML')
 
