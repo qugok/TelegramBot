@@ -25,6 +25,7 @@ class Wiki:
     def set_lang(self, lang: str = 'ru'):
         try:
             wikipedia.set_lang(lang)
+            wikipedia.search('сталин')
             self.lang = lang
             return 'SUCCESSFUL'
         except:
@@ -70,13 +71,20 @@ class Wiki:
 
     def find_date(self, date: int):
         self.events = None
-        return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
-        # try:
-        #     events = re.search('==.*?\n== ', wikipedia.page(date).content)
-        #
-        #     return 'OK'
-        # except:
-        #     return 'NOT found'
+        # return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
+        try:
+            page = wikipedia.page(date)
+            events = re.search(r'(==(?:.|\n)*?)\n== ', page.content)
+            events = events.groups()[0]
+            events = events.split('\n=== ')
+            events = [tuple([j.strip() for j in i.split('=') if j != '']) for i in events if 'См. также' not in i]
+            if events[0][1] == '':
+                events.pop(0)
+            self.events = events
+            self.suggest = wikipedia.suggest(date)
+            return events
+        except:
+            return None
 
     def __str__(self):
         # return str(self.__dict__)

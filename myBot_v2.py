@@ -11,6 +11,23 @@ from wiki_search_v2 import Wiki, Log
 
 log = Log()
 
+message_size_limit = 4000
+
+
+def write_error(user: str, time: str, message: str):
+    with open(user + time + '.txt', 'x', encoding='utf-8') as f:
+        f.write(message)
+
+
+def split(message: str):
+    temp = ''
+    for i in message.split('\n'):
+        if len(temp + i) > message_size_limit:
+            yield temp.strip()
+            temp = ''
+        temp += '\n' + i
+    yield temp.strip()
+
 
 class message:
     def __init__(self, *texts, **options):
@@ -18,11 +35,21 @@ class message:
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
+        self.prepare()
         for text in self.texts:
             bot.sendMessage(chat_id=chat_id, text=text, **self.options)
 
     def add(self, *texts: str):
         return message(*texts, *self.texts, **self.options)
+
+    def prepare(self):
+        texts = []
+        for i in self.texts:
+            texts.extend(split(i))
+        self.texts = texts
+
+    def __str__(self):
+        return str(self.__dict__)
 
 
 class myBot:
@@ -42,13 +69,16 @@ class myBot:
         # Останавливаем бота, если были нажаты Ctrl + C
         self.updater.idle()
 
-    def handle_message(self, bot, update):
+    def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         # print("Received", update.message)
+        log.write('получил сообщение ' + str(update.message))
         chat_id = update.message.chat_id
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть
             self.handlers.pop(chat_id, None)
+        if update.message.text.startswith('/error'):
+            bot.sendMessage(chat_id=chat_id, text=update.message.text)
         if chat_id in self.handlers:
             # если диалог уже начат, то надо использовать .send(), чтобы
             # передать в генератор ответ пользователя
@@ -67,6 +97,7 @@ class myBot:
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
         answer.send(bot, chat_id)
+        log.write('ответ отправлен ' + str(answer))
 
 
 telegram_token = my_read.read_telegram_token()
@@ -76,9 +107,10 @@ info_find_message = my_read.read_message('info_find_message')
 help_message = my_read.read_message('help_message')
 chose_lang_html_text = my_read.read_message('chose_lang_message')
 info_date_message = my_read.read_message('info_date_message')
+info_error_message = my_read.read_message('info_error_message')
 
 chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
-info_message = message(info_find_message, info_date_message)
+info_message = message(info_find_message, info_date_message, info_error_message, parse_mode='HTML')
 
 
 def dialog():
@@ -128,19 +160,32 @@ def dialog():
                     'Вы ввели не только цифры года, попытайтесь с начала)')
                 continue
             year = int(text.strip('годyear '))
-            current = message(str(year), wiki.find_date(year))
+            current = message(str(year),
+                              [i + '\n' + j for i, j in wiki.find_date(year)])
             answer = yield current
             continue
         if 'спасибо' in answer.text.lower():
             answer = yield message(
-                'Всегда пожалуйста, %s!\nРад был помочь)' % name, 'Всё для тебя - рассветы и туманы,\nДля тебя - моря и океаны,\nДля тебя - цветочные поляны,\nДля тебя, %s!' %name)
+                'Всегда пожалуйста, %s!\nРад был помочь)' % name,
+                'Всё для тебя - рассветы и туманы,\nДля тебя - моря и океаны,\nДля тебя - цветочные поляны,\nДля тебя, %s!' % name)
             continue
 
         if 'пожалуйста' in answer.text.lower():
-            answer = yield message('Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
+            answer = yield message(
+                'Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
             continue
 
-        answer = yield info_message.add('Я не понимаю что вы написали(', 'Вот вам подсказка,\nЗдесь всё, что я умею\nВы можете её вызвать командой /help\nУдачи!)')
+        if answer.text.startswith('/error'):
+            text = answer.text[6:]
+            if text.strip(' !.();:') == '':
+                answer = yield message('Введите ваше сообщение')
+                text = answer.text
+            write_error(name + answer.from_user.first_name + answer.chat_id, str(answer.date), text)
+            answer = yield message('Ваше сообщение было успешно сохранено и создатель в скором времени его обязательно прочитает)')
+            continue
+
+        answer = yield info_message.add('Я не понимаю что вы написали(',
+                                        'Вот вам подсказка,\nЗдесь всё, что я умею\nВы можете её вызвать командой /help\nУдачи!)')
 
 
 def chose_lang(wiki: Wiki):
