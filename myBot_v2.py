@@ -137,14 +137,14 @@ def chose_lang(wiki: Wiki):
         code = 'en'
     else:
         code = lang.lower()
-    print(code)
+    # print(code)
     if wiki.set_lang(code) == 'SUCCESSFUL':
         # ans = yield message('язык успешно сменен на ' + lang.capitalize() + ' with code ' + code)
         ans = yield message('язык успешно сменен на ' + lang.capitalize())
     else:
         ans = yield message(
             'не удалось смениеть язык на' + lang + 'попробуйте что-то другое')
-    print('end')
+    # print('end')
     return ans
 
 
