@@ -72,8 +72,8 @@ class myBot:
 
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         # print("Received", update.message)
-        log.write('получил сообщение ' + str(update.message))
         chat_id = update.message.chat_id
+        log.write('получил сообщение ' + update.message.text + ' от ' + update.message.from_user.first_name + '\t id ' + chat_id)
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть
@@ -165,9 +165,9 @@ def dialog():
                     'Вы ввели не только цифры года, попытайтесь с начала)')
                 continue
             year = text.strip('годyear нэ.')
-            # print('find year ' + year)
-            # print('to send')
-            # print(str(year), [i + '\n' + j for i, j in wiki.find_date(year)])
+            print('find year ' + year)
+            print('to send')
+            print(str(year), [i + '\n' + j for i, j in wiki.find_date(year)])
 
             answer = yield message(str(year), *[i + '\n' + j for i, j in
                                                 wiki.find_date(year)])
