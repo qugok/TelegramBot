@@ -73,7 +73,7 @@ class myBot:
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         # print("Received", update.message)
         chat_id = str(update.message.chat_id)
-        log.write('получил сообщение ' + str(update.message.text) + ' от ' + str(update.message.from_user.first_name()) + '\t id ' + chat_id)
+        log.write('получил сообщение ' + str(update.message.text) + ' от ' + str(update.message.from_user.first_name) + '\t id ' + chat_id)
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть
