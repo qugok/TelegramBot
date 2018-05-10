@@ -170,7 +170,7 @@ def dialog():
             year = text.strip('годyear нэ.')
             print('find year ' + year)
             print('to send')
-            print(str(year), [i + '\n' + j for i, j in wiki.find_date(year)])
+            print(str(year), wiki.find_date(year))
 
             answer = yield message(str(year), *[i + '\n' + j for i, j in
                                                 wiki.find_date(year)])
