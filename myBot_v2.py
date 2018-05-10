@@ -133,8 +133,9 @@ def dialog():
                 text = answer.text[5:]
             if text.strip(' !.();:') == '':
                 answer = yield message('Введите то, что хотите найти')
-            text = answer.text
+                text = answer.text
             # print('pre Wiki')
+            # print('find text "' + text+'"')
             current = message(wiki.fullFind(text))
             # print('post Wiki')
             answer = yield current
@@ -159,14 +160,15 @@ def dialog():
             if text.strip(' !.();:') == '':
                 answer = yield message('Введите год')
                 text = answer.text
-            if not text.strip('годyear ').isdigit():
+            if not text.strip('годyear нэ.').isdigit():
                 answer = yield message(
                     'Вы ввели не только цифры года, попытайтесь с начала)')
                 continue
-            year = int(text.strip('годyear '))
-            # print(year)
+            year = text.strip('годyear нэ.')
+            # print('find year ' + year)
             # print('to send')
             # print(str(year), [i + '\n' + j for i, j in wiki.find_date(year)])
+
             answer = yield message(str(year), *[i + '\n' + j for i, j in
                                                 wiki.find_date(year)])
             # print('send')

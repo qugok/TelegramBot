@@ -69,7 +69,7 @@ class Wiki:
             self.log('what do you mean?\n' + '\n'.join(self.maybe[:20]))
             return 'what do you mean?\n' + '\n'.join(self.maybe[:20])
 
-    def find_date(self, date: int):
+    def find_date(self, date: str):
         self.events = None
         # return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
         try:
