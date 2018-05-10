@@ -13,7 +13,7 @@ from wiki_search_v2 import Wiki, Log
 log = Log()
 
 message_size_limit = 4000
-
+black_list_ids = [75781753]
 
 def write_error(user: str, time: str, message: str):
     with open(user + time + '.txt', 'x', encoding='utf-8') as f:
@@ -94,7 +94,7 @@ class myBot:
             # диалог только начинается. defaultdict запустит новый генератор для этого
             # чатика, а мы должны будем извлечь первое сообщение с помощью .next()
             # (.send() срабатывает только после первого yield)
-            if chat_id == 75781753:
+            if chat_id in black_list_ids:
                 self.handlers[chat_id] = bad_bot()
             answer = next(self.handlers[chat_id])
         # отправляем полученный ответ пользователю
@@ -230,7 +230,7 @@ def bad_bot():
         yield message('Я с тобой не разговариваю!')
         count += 1
         if count % 10 == 0:
-            yield message('Да ты заебал!')
+            yield message('Тебе не надоело?')
 
 
 if __name__ == "__main__":
