@@ -85,6 +85,9 @@ class Wiki:
                 events.pop(0)
             self.events = events
             self.suggest = wikipedia.suggest(date)
+            # if self.suggest is None:
+            print(page.title)
+                # self.suggest = page.title
             return events
         except:
             return None
