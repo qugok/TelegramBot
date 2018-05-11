@@ -1,122 +1,241 @@
 #!/usr/bin/python3
 
 # Настройки
+# from emoji import emojize
 import collections
 
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import telegram
+from telegram.ext import Updater, MessageHandler, Filters
 
 import my_read
-from Log import Log
-# from wiki_search import Wiki
-from wiki_search_v2 import Wiki
-
-myToken = my_read.read_telegram_token()
-start_message = my_read.read_message('old_start_message')
+from wiki_search import Wiki, Log
 
 log = Log()
 
+message_size_limit = 4000
+black_list_ids = [75781753]
+
+def write_error(user: str, time: str, message: str):
+    with open(user + time + '.txt', 'x', encoding='utf-8') as f:
+        f.write(message)
 
 
+def split(message: str):
+    temp = ''
+    for i in message.split('\n'):
+        if len(temp + i) > message_size_limit:
+            yield temp.strip()
+            temp = ''
+        temp += '\n' + i
+    yield temp.strip()
 
 
-# print(start_message)
-# exit()
+class message:
+    def __init__(self, *texts, **options):
+        self.texts = texts
+        self.options = options
 
-updater = Updater(
-    token=myToken)  # Токен API к Telegram
-dispatcher = updater.dispatcher
+    def send(self, bot: telegram.Bot, chat_id):
+        self.prepare()
+        for text in self.texts:
+            bot.sendMessage(chat_id=chat_id, text=text, **self.options)
 
+    def add(self, *texts: str):
+        return message(*texts, *self.texts, **self.options)
 
-# class MyBot:
-#
-#     def __init__(self):
-#         self.updater = Updater(token=myToken)  # заводим апдейтера
-#         handler = MessageHandler(Filters.text | Filters.command, self.handle_message)
-#         self.updater.dispatcher.add_handler(handler)  # ставим обработчик всех текстовых сообщений
-#         self.handlers = collections.defaultdict()  # заводим мапу "id чата -> генератор"
+    def prepare(self):
+        texts = []
+        for i in self.texts:
+            texts.extend(split(i))
+        self.texts = texts
 
-def getName(update):
-    try:
-        return update.message.from_user.first_name
-    except:
-        return 'unknown'
-
-
-# default_wiki = Wiki()
-wikies = collections.defaultdict(Wiki)
+    def __str__(self):
+        return str(self.__dict__)
 
 
-# Обработка команд
-def startCommand(bot, update):
-    name = getName(update)
-    bot.send_message(chat_id=update.message.chat_id,
-                     text=start_message % name)
-    wikies[update.message.chat_id] = Wiki(log=log)
-    # print("pre logging")
-    log.write(str('from ' + str(
-        update.message.chat_id) + ' named ' + name + ' start command\n'))
-    # print('start logged')
+class myBot:
 
+    def __init__(self, token, generator):
+        self.updater = Updater(token=token)  # заводим апдейтера
+        handler = MessageHandler(Filters.text | Filters.command,
+                                 self.handle_message)
+        self.updater.dispatcher.add_handler(
+            handler)  # ставим обработчик всех текстовых сообщений
+        self.handlers = collections.defaultdict(
+            generator)  # заводим мапу "id чата -> генератор"
 
-def textMessage(bot, update):
-    current_message = str(update.message.text)
-    if 'найди' in current_message.lower():
-        current_message = current_message.lower().replace('найди', '')
-        # print("find log start")
-        # print(str(current_message))
-        name = getName(update)
-        log.write(
-            'from ' + str(
-                update.message.chat_id) + ' named ' + name + " find command with \t"
-            + str(current_message))
-        # print("find logged")
-        # bot.send_message(chat_id=update.message.chat_id,
-        #                  text='ищу ' + current_message)
-        # print(wikies[update.message.chat_id])
-        # link = wikies[update.message.chat_id].find_link(current_message)
-        current_wiki = wikies[update.message.chat_id]
-        code = current_wiki.find(current_message)
-        # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
-        log.write(current_message + ' found with code ' + str(code))
-        if code == 'OK' or code is None:
-            if current_wiki.suggest is None:
-                log.write('without suggestion with text' + "'" + str(
-                    current_wiki.text) + "'")
-                bot.send_message(chat_id=update.message.chat_id,
-                                 text=str(current_wiki.text))
-            else:
-                log.write('with suggestion ' + str(
-                    current_wiki.suggest) + 'with text' + str(
-                    current_wiki.text))
-                bot.send_message(chat_id=update.message.chat_id,
-                                 text='you mean ' + str(
-                                     current_wiki.suggest) + '?\n' + str(
-                                     current_wiki.text))
+    def start(self):
+        # Начинаем поиск обновлений
+        self.updater.start_polling(clean=True)
+        # Останавливаем бота, если были нажаты Ctrl + C
+        self.updater.idle()
+
+    def handle_message(self, bot: telegram.Bot, update: telegram.Update):
+        # print("Received", update.message)
+        chat_id = str(update.message.chat_id)
+        try:
+            log.write('получил сообщение ' + str(update.message.text) + ' от ' + str(update.message.from_user.first_name) + '\t id ' + chat_id)
+        except:
+            pass
+        if update.message.text == "/start":
+            # если передана команда /start, начинаем всё с начала -- для
+            # этого удаляем состояние текущего чатика, если оно есть
+            self.handlers.pop(chat_id, None)
+        if update.message.text.startswith('/error'):
+            bot.sendMessage(chat_id=chat_id, text=update.message.text)
+        if chat_id in self.handlers:
+            # если диалог уже начат, то надо использовать .send(), чтобы
+            # передать в генератор ответ пользователя
+            try:
+                answer = self.handlers[chat_id].send(update.message)
+            except StopIteration:
+                # если при этом генератор закончился -- что делать, начинаем общение с начала
+                del self.handlers[chat_id]
+                # (повторно вызванный, этот метод будет думать, что пользователь с нами впервые)
+                return self.handle_message(bot, update)
         else:
-            # wikies[update.message.chat_id].find(wikies[update.message.chat_id].maybe[0])
-            # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
-            # bot.send_message(chat_id=update.message.chat_id, text=wikies[update.message.chat_id].text)
-            bot.send_message(chat_id=update.message.chat_id,
-                             text='what do you mean?\n' + my_str(
-                                 *wikies[update.message.chat_id].maybe[:20]))
-        log.write('message ' + "'" + str(wikies[
-                                             update.message.chat_id].text) + "'" + ' send to ' + name)
-        log.write('message send\n')
-        # print("message send")
+            # диалог только начинается. defaultdict запустит новый генератор для этого
+            # чатика, а мы должны будем извлечь первое сообщение с помощью .next()
+            # (.send() срабатывает только после первого yield)
+            if chat_id in black_list_ids:
+                self.handlers[chat_id] = bad_bot()
+            answer = next(self.handlers[chat_id])
+        # отправляем полученный ответ пользователю
+        # print("Answer: %r" % answer)
+        answer.send(bot, chat_id)
+        log.write('ответ отправлен ' + str(answer))
 
+
+telegram_token = my_read.read_telegram_token()
+
+start_message = my_read.read_message('start_message')
+info_find_message = my_read.read_message('info_find_message')
+help_message = my_read.read_message('help_message')
+chose_lang_html_text = my_read.read_message('chose_lang_message')
+info_date_message = my_read.read_message('info_date_message')
+info_error_message = my_read.read_message('info_error_message')
+# print(info_error_message)
+chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
+info_message = message(info_find_message, info_date_message,
+                       info_error_message, parse_mode='HTML')
+
+
+def dialog():
+    answer = yield message(start_message)
+    # убираем ведущие знаки пунктуации, оставляем только
+    # первую компоненту имени, пишем её с заглавной буквы
+    name = answer.text.rstrip(".!").split()[0].capitalize()
+    wiki = Wiki(log=log)
+    answer = yield info_message
+    while True:
+        if answer.text.startswith('/find') or answer.text.lower().startswith(
+                'найди'):
+            if answer.text.lower().startswith('найди мне'):
+                text = answer.text[9:]
+            else:
+                text = answer.text[5:]
+            if text.strip(' !.();:') == '':
+                answer = yield message('Введите то, что хотите найти')
+                text = answer.text
+            # print('pre Wiki')
+            # print('find text "' + text+'"')
+            current = message(wiki.fullFind(text))
+            # print('post Wiki')
+            answer = yield current
+            continue
+
+        if answer.text.startswith('/lang'):
+            answer = yield from chose_lang(wiki)
+            continue
+
+        if answer.text.startswith('/help'):
+            answer = yield info_message
+            continue
+
+        if answer.text.startswith('/date') or answer.text.lower().startswith(
+                'что было') or answer.text.lower().startswith('что было в'):
+            if answer.text.lower().startswith('что было'):
+                text = answer.text[8:]
+            elif answer.text.lower().startswith('что было в'):
+                text = answer.text[10:]
+            else:
+                text = answer.text[5:]
+            if text.strip(' !.();:') == '':
+                answer = yield message('Введите год')
+                text = answer.text
+            if not text.strip('годyear нэ.').isdigit():
+                answer = yield message(
+                    'Вы ввели не только цифры года, попытайтесь с начала)')
+                continue
+            year = text.strip('годyear ')
+            print('find year ' + year)
+            print('to send')
+            print(str(year), wiki.find_date(year))
+
+            answer = yield message(str(year), *[i + '\n' + j for i, j in
+                                                wiki.find_date(year)])
+            # print('send')
+            continue
+
+        if 'спасибо' in answer.text.lower():
+            answer = yield message(
+                'Всегда пожалуйста, %s!\nРад был помочь)' % name,
+                'Всё для тебя - рассветы и туманы,\nДля тебя - моря и океаны,\nДля тебя - цветочные поляны,\nДля тебя, %s!' % name)
+            continue
+
+        if 'пожалуйста' in answer.text.lower():
+            answer = yield message(
+                'Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
+            continue
+
+        if answer.text.startswith('/error'):
+            text = answer.text[6:]
+            if text.strip(' !.();:') == '':
+                answer = yield message('Введите ваше сообщение')
+                text = answer.text
+            write_error(name + answer.from_user.first_name + answer.chat_id,
+                        str(answer.date), text)
+            answer = yield message(
+                'Ваше сообщение было успешно сохранено и создатель в скором времени его обязательно прочитает)')
+            continue
+
+        answer = yield info_message.add('Я не понимаю что вы написали(',
+                                        'Вот вам подсказка,\nЗдесь всё, что я умею\nВы можете её вызвать командой /help\nУдачи!)')
+
+
+def chose_lang(wiki: Wiki):
+    lang = yield chose_lang_message
+    lang = lang.text
+    if lang.lower().startswith('rus') or lang.lower().startswith('рус'):
+        code = 'ru'
+    elif lang.lower().startswith('eng') or lang.lower().startswith('анг'):
+        code = 'en'
     else:
-        response = 'Получил Ваше сообщение: ' + update.message.text
-        bot.send_message(chat_id=update.message.chat_id, text=response)
+        code = lang.lower()
+    # print(code)
+    if wiki.set_lang(code) == 'SUCCESSFUL':
+        # ans = yield message('язык успешно сменен на ' + lang.capitalize() + ' with code ' + code)
+        ans = yield message('язык успешно сменен на ' + lang.capitalize())
+    else:
+        ans = yield message(
+            'не удалось смениеть язык на' + lang + 'попробуйте что-то другое')
+    # print('end')
+    return ans
 
 
-# Хендлеры
-start_command_handler = CommandHandler('start', startCommand)
-text_message_handler = MessageHandler(Filters.text, textMessage)
+def bad_bot():
+    """
+    специально для Никиты
+    :return:
+    """
+    count = 0
+    while True:
+        yield message('Я с тобой не разговариваю!')
+        count += 1
+        if count % 10 == 0:
+            yield message('Тебе не надоело?')
 
-# Добавляем хендлеры в диспетчер
-dispatcher.add_handler(start_command_handler)
-dispatcher.add_handler(text_message_handler)
-# Начинаем поиск обновлений
-updater.start_polling(clean=True)
-# Останавливаем бота, если были нажаты Ctrl + C
-updater.idle()
+
+if __name__ == "__main__":
+    dialog_bot = myBot(telegram_token, dialog)
+    dialog_bot.start()
