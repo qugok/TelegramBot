@@ -77,6 +77,8 @@ class Wiki:
         self.suggest = None
         # return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
         try:
+            print(date)
+            print(wikipedia.summary(date))
             page = wikipedia.page(date)
             events = re.search(r'(==(?:.|\n)*?)\n== ', page.content)
             events = events.groups()[0]
