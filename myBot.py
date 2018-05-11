@@ -167,7 +167,7 @@ def dialog():
                 answer = yield message(
                     'Вы ввели не только цифры года, попытайтесь с начала)')
                 continue
-            year = text.strip('годyear ')
+            year = text.strip()
             print('find year ' + year)
             print('to send')
             print(str(year), wiki.find_date(year))
