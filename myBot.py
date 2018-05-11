@@ -169,12 +169,13 @@ def dialog():
                     'Вы ввели не только цифры года, попытайтесь с начала)')
                 continue
             year = text.strip()
+            wiki.find_date(year)
             print('find year ' + year)
             print('to send')
-            print(str(year), wiki.find_date(year))
+            print(str(year), wiki.events)
 
             answer = yield message(str(year), *[i + '\n' + j for i, j in
-                                                wiki.find_date(year)])
+                                                wiki.events])
             # print('send')
             continue
 
