@@ -72,6 +72,7 @@ class Wiki:
     def find_date(self, date: str):
         if date.strip().isdigit():
             date += ' год'
+        print(date)
         self.events = None
         self.suggest = None
         # return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
