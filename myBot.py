@@ -38,6 +38,7 @@ class message:
     def send(self, bot: telegram.Bot, chat_id):
         self.prepare()
         for text in self.texts:
+            print(len(text), text)
             bot.sendMessage(chat_id=chat_id, text=text, **self.options)
 
     def add(self, *texts: str):

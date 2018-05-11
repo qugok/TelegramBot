@@ -70,6 +70,8 @@ class Wiki:
             return 'what do you mean?\n' + '\n'.join(self.maybe[:20])
 
     def find_date(self, date: str):
+        if date.isdigit():
+            date += ' год'
         self.events = None
         # return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
         try:
