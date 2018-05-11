@@ -73,6 +73,7 @@ class Wiki:
         if date.strip().isdigit():
             date += ' год'
         self.events = None
+        self.suggest = None
         # return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
         try:
             page = wikipedia.page(date)

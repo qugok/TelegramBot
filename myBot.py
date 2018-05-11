@@ -20,6 +20,7 @@ def write_error(user: str, time: str, message: str):
         f.write(message)
 
 
+
 def split(message: str):
     temp = ''
     for i in message.split('\n'):
@@ -173,7 +174,8 @@ def dialog():
             print('find year ' + year)
             print('to send')
             print(str(year), wiki.events)
-
+            if wiki.suggest is not None:
+                year = wiki.suggest
             answer = yield message(str(year), *[i + '\n' + j for i, j in
                                                 wiki.events])
             # print('send')
