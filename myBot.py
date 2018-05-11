@@ -176,9 +176,7 @@ def dialog():
             print('find year ' + year)
             print('to send')
             print(str(year), wiki.events)
-            if wiki.suggest is not None:
-                year = wiki.suggest
-            answer = yield message(str(year), *[i + '\n' + j for i, j in
+            answer = yield message(str(wiki.suggest), *[i + '\n' + j for i, j in
                                                 wiki.events])
             # print('send')
             continue
