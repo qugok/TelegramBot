@@ -28,7 +28,8 @@ def split(message: str):
             yield temp.strip()
             temp = ''
         temp += '\n' + i
-    yield temp.strip()
+    if len(temp.strip()) != 0:
+        yield temp.strip()
 
 
 class message:
@@ -111,14 +112,15 @@ class myBot:
 telegram_token = my_read.read_telegram_token()
 
 start_message = my_read.read_message('start_message')
-info_find_message = my_read.read_message('info_find_message')
-help_message = my_read.read_message('help_message')
 chose_lang_html_text = my_read.read_message('chose_lang_message')
+help_message = my_read.read_message('help_message')
+info_find_message = my_read.read_message('info_find_message')
 info_date_message = my_read.read_message('info_date_message')
+info_lang_message = my_read.read_message('info_lang_message')
 info_error_message = my_read.read_message('info_error_message')
 # print(info_error_message)
 chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
-info_message = message(info_find_message, info_date_message,
+info_message = message(info_find_message, info_lang_message, info_date_message,
                        info_error_message, parse_mode='HTML')
 
 
