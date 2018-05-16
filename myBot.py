@@ -37,7 +37,8 @@ def split(message: str):
 class message:
     def __init__(self, *texts, **options):
         self.texts = texts
-        options.setdefault('reply_markup', ReplyKeyboardRemove())
+        if 'reply_markup' not in options:
+            options['reply_markup'] = ReplyKeyboardRemove()
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
@@ -265,6 +266,7 @@ def chose_lang(wiki: Wiki):
 
 def send_find_text(text: str, wiki: Wiki):
     request = wiki.find(text)
+    print('request code', request)
     if request == 'OK':
         if wiki.suggest is None:
             update = yield message(link.format(wiki.page.url, text), wiki.text,
