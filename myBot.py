@@ -7,7 +7,7 @@ import collections
 import telegram
 from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import Updater, MessageHandler, Filters
+from telegram.ext import Updater, MessageHandler, CommandHandler, Filters
 
 import my_read
 from wiki_search import Wiki, Log
@@ -46,7 +46,8 @@ class message:
         self.prepare()
         for text in self.texts:
             # print(len(text), text)
-            bot.sendMessage(chat_id=chat_id, text=text, **self.options)
+            if len(text.strip()) != 0:
+                bot.sendMessage(chat_id=chat_id, text=text, **self.options)
             # print('send')
 
     def add(self, *texts: str):
@@ -88,10 +89,17 @@ class myBot:
 
     def __init__(self, token, generator):
         self.updater = Updater(token=token)  # заводим апдейтера
-        handler = MessageHandler(Filters.text | Filters.command,
-                                 self.handle_message)
+        text_handler = MessageHandler(Filters.text, self.handle_message)
+        start_handler = CommandHandler('start', self.handle_message)
+        help_handler = CommandHandler('help', self.handle_message)
+        date_handler = CommandHandler('date', self.handle_message)
+        find_handler = CommandHandler('find', self.handle_message)
         self.updater.dispatcher.add_handler(
-            handler)  # ставим обработчик всех текстовых сообщений
+            text_handler)  # ставим обработчик всех текстовых сообщений
+        self.updater.dispatcher.add_handler(start_handler)
+        self.updater.dispatcher.add_handler(help_handler)
+        self.updater.dispatcher.add_handler(date_handler)
+        self.updater.dispatcher.add_handler(find_handler)
         self.handlers = collections.defaultdict(
             generator)  # заводим мапу "id чата -> генератор"
 
@@ -152,7 +160,8 @@ help_message = my_read.read_message('help_message')
 info_find_message = my_read.read_message('info_find_message')
 info_date_message = my_read.read_message('info_date_message')
 info_lang_message = my_read.read_message('info_lang_message')
-info_error_message = my_read.read_message('info_error_message')
+# info_error_message = my_read.read_message('info_error_message')
+info_error_message = ''
 # print(info_error_message)
 chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
 info_message = message(info_find_message, info_lang_message, info_date_message,
