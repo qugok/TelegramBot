@@ -89,17 +89,10 @@ class myBot:
 
     def __init__(self, token, generator):
         self.updater = Updater(token=token)  # заводим апдейтера
-        text_handler = MessageHandler(Filters.text, self.handle_message)
-        start_handler = CommandHandler('start', self.handle_message)
-        help_handler = CommandHandler('help', self.handle_message)
-        date_handler = CommandHandler('date', self.handle_message)
-        find_handler = CommandHandler('find', self.handle_message)
+        text_handler = MessageHandler(Filters.text | Filters.command, self.handle_message)
         self.updater.dispatcher.add_handler(
             text_handler)  # ставим обработчик всех текстовых сообщений
-        self.updater.dispatcher.add_handler(start_handler)
-        self.updater.dispatcher.add_handler(help_handler)
-        self.updater.dispatcher.add_handler(date_handler)
-        self.updater.dispatcher.add_handler(find_handler)
+
         self.handlers = collections.defaultdict(
             generator)  # заводим мапу "id чата -> генератор"
 
@@ -242,18 +235,18 @@ def dialog():
             answer = update.message
             continue
 
-        if answer.text.startswith('/error'):
-            text = answer.text[6:]
-            if text.strip(' !.();:') == '':
-                update = yield message('Введите ваше сообщение')
-                answer = update.message
-                text = answer.text
-            write_error(name + answer.from_user.first_name + answer.chat_id,
-                        str(answer.date), text)
-            update = yield message(
-                'Ваше сообщение было успешно сохранено и создатель в скором времени его обязательно прочитает)')
-            answer = update.message
-            continue
+        # if answer.text.startswith('/error'):
+        #     text = answer.text[6:]
+        #     if text.strip(' !.();:') == '':
+        #         update = yield message('Введите ваше сообщение')
+        #         answer = update.message
+        #         text = answer.text
+        #     write_error(name + answer.from_user.first_name + answer.chat_id,
+        #                 str(answer.date), text)
+        #     update = yield message(
+        #         'Ваше сообщение было успешно сохранено и создатель в скором времени его обязательно прочитает)')
+        #     answer = update.message
+        #     continue
 
         update = yield info_message.add('Я не понимаю что вы написали(',
                                         'Вот вам подсказка,\nЗдесь всё, что я умею\nВы можете её вызвать командой /help\nУдачи!)')
@@ -262,8 +255,7 @@ def dialog():
 
 def chose_lang(wiki: Wiki):
     update = yield chose_lang_message
-    lang = update.message
-    lang = lang.text
+    lang = update.message.text
     if lang.lower().startswith('rus') or lang.lower().startswith('рус'):
         code = 'ru'
     elif lang.lower().startswith('eng') or lang.lower().startswith('анг'):
@@ -276,7 +268,7 @@ def chose_lang(wiki: Wiki):
         ans = yield message('язык успешно сменен на ' + lang.capitalize())
     else:
         ans = yield message(
-            'не удалось смениеть язык на' + lang + 'попробуйте что-то другое')
+            'Не удалось смениеть язык на ' + lang + ' попробуйте что-то другое')
     # print('end')
     return ans
 
