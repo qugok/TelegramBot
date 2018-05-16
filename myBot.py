@@ -98,6 +98,7 @@ class myBot:
 
     def start(self):
         # Начинаем поиск обновлений
+        print('Init successful. Polling...')
         self.updater.start_polling()
         # self.updater.start_polling(clean=True)
         # Останавливаем бота, если были нажаты Ctrl + C
