@@ -208,6 +208,7 @@ def dialog():
             print(wiki.find_date(year))
             print('to send')
             print(str(year), wiki.events)
+            print('\n\n\nxxx',*[i + '\n' + j for i, j in wiki.events])
             update = yield message(str(wiki.suggest),
                                    *[i + '\n' + j for i, j in
                                      wiki.events])
