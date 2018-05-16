@@ -275,7 +275,7 @@ def send_find_text(text: str, wiki: Wiki):
     if request == 'OK':
         print(link, link.format(wiki.page.url, text))
         if wiki.suggest is None:
-            update = yield message(link.format(wiki.page.url, text), wiki.text,
+            update = yield message(link.format(wiki.page.url, wiki.page.title), wiki.text,
                 'Вам нужно больше информации?',parse_mode='HTML').makeKeyboard([['Да'], ['Нет']])
         else:
             update = yield message('Возможно вы имели ввиду ' + link.format(wiki.page.url, wiki.suggest),wiki.text,'Вам нужно больше информации?', parse_mode='HTML').makeKeyboard([['Да'], ['Нет']])

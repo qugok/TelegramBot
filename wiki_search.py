@@ -81,7 +81,7 @@ class Wiki:
             print(date)
             print(wikipedia.summary(date))
             page = wikipedia.page(date)
-            # page.
+            page.t
             events = re.search(r'(==(?:.|\n)*?)\n== ', page.content)
             events = events.groups()[0]
             events = events.split('\n=== ')
