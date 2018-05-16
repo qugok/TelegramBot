@@ -106,12 +106,12 @@ class myBot:
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         # print("Received", update.message)
         chat_id = str(update.message.chat_id)
-        try:
-            log.write(
-                'получил сообщение ' + str(update.message.text) + ' от ' + str(
-                    update.message.from_user.first_name) + '\t id ' + chat_id)
-        except:
-            pass
+        # try:
+        #     log.write(
+        #         'получил сообщение ' + str(update.message.text) + ' от ' + str(
+        #             update.message.from_user.first_name) + '\t id ' + chat_id)
+        # except:
+        #     pass
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть
@@ -140,7 +140,7 @@ class myBot:
         # print("Answer: %r" % answer)
         # print('sending answer:')
         answer.send(bot, chat_id)
-        log.write('ответ отправлен ' + str(answer))
+        # log.write('ответ отправлен ' + str(answer))
 
 
 telegram_token = my_read.read_telegram_token()
@@ -191,19 +191,13 @@ def dialog():
             answer = update.message
             continue
 
-        if answer.text.startswith('/date') or answer.text.lower().startswith(
-                'что было') or answer.text.lower().startswith('что было в'):
-            if answer.text.lower().startswith('что было'):
-                text = answer.text[8:]
-            elif answer.text.lower().startswith('что было в'):
-                text = answer.text[10:]
-            else:
-                text = answer.text[5:]
+        if answer.text.startswith('/date'):
+            text = answer.text[5:]
             if text.strip(' !.();:') == '':
                 update = yield message('Введите год')
                 answer = update.message
                 text = answer.text
-            if not text.strip('годyear нэ.').isdigit():
+            if not text.strip('донэ.').isdigit():
                 update = yield message(
                     'Вы ввели не только цифры года, попытайтесь с начала)')
                 answer = update.message

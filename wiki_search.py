@@ -54,25 +54,18 @@ class Wiki:
             self.text = 'Page not found'
             return None
 
-    def fullFind(self, query: str):
-
-        code = self.find(query)
-        # print('code = ', code, ' text = ', wikies[update.message.chat_id].text)
-        self.log(query + ' found with code ' + str(code))
-        if code == 'OK' or code is None:
-            if self.suggest is None:
-                self.log('without suggestion with text' + "'" + str(self.text) + "'")
-                return str(self.text)
-            else:
-                self.log('with suggestion ' + str(self.suggest) + 'with text' + str(self.text))
-                return 'you mean ' + str(self.suggest) + '?\n' + str(self.text)
-        else:
-            self.log('what do you mean?\n' + '\n'.join(self.maybe[:20]))
-            return 'what do you mean?\n' + '\n'.join(self.maybe[:20])
-
     def find_date(self, date: str):
-        if date.strip().isdigit():
-            date += ' год'
+        if self.lang == 'ru':
+            date = date.strip()
+            if not date.strip().isdigit():
+                date = date.strip() + ' до н.э'
+            wikipedia.set_lang('ru')
+        else:
+            if date.strip().isdigit():
+                date = 'AD ' + date
+            else:
+                date = date.strip('донэ.') + ' BC'
+            wikipedia.set_lang('en')
         print(date)
         self.events = None
         self.suggest = None
@@ -81,7 +74,7 @@ class Wiki:
             print(date)
             print(wikipedia.summary(date))
             page = wikipedia.page(date)
-            page.t
+            # page.t
             events = re.search(r'(==(?:.|\n)*?)\n== ', page.content)
             events = events.groups()[0]
             events = events.split('\n=== ')
