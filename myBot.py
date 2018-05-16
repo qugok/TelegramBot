@@ -67,6 +67,7 @@ class message:
             for j in i:
                 line.append(KeyboardButton(text=j))
         self.options['reply_markup'] = ReplyKeyboardMarkup(new)
+        print('keyboard Made')
 
     def makeInlineKeyboard(self, list):
         new = []
