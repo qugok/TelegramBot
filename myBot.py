@@ -37,7 +37,7 @@ def split(message: str):
 class message:
     def __init__(self, *texts, **options):
         self.texts = texts
-        options.setdefault('reply_markup', replykeyboardremove)
+        # options.setdefault('reply_markup', replykeyboardremove)
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
