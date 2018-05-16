@@ -278,7 +278,7 @@ def send_find_text(text: str, wiki: Wiki):
     if request == 'OK':
         update = yield from print_page(wiki)
     elif request == 'OPTIONS':
-        update = yield message('что из этого вы имели ввиду?').makeKeyboard([*wiki.maybe])
+        update = yield message('что из этого вы имели ввиду?').makeKeyboard([[i] for i in wiki.maybe])
         if update.message.text in wiki.maybe:
             request = wiki.find(update.message.text)
             if request == 'OK':
