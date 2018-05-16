@@ -42,6 +42,7 @@ class message:
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
+        print('start sending')
         self.prepare()
         for text in self.texts:
             print(len(text), text)
@@ -56,6 +57,7 @@ class message:
         for i in self.texts:
             texts.extend(split(i))
         self.texts = texts
+        print('prepare finished')
 
     def __str__(self):
         return str(self.__dict__)
@@ -110,8 +112,8 @@ class myBot:
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть
             self.handlers.pop(chat_id, None)
-        if update.message.text.startswith('/error'):
-            bot.sendMessage(chat_id=chat_id, text=update.message.text)
+        # if update.message.text.startswith('/error'):
+        #     bot.sendMessage(chat_id=chat_id, text=update.message.text)
         if chat_id in self.handlers:
             # если диалог уже начат, то надо использовать .send(), чтобы
             # передать в генератор ответ пользователя
