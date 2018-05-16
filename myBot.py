@@ -139,7 +139,7 @@ class myBot:
         # answer = message('effdfd').makeKeyboard([['Да']])
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
-        # print('sending answer:')
+        print('sending answer:')
         answer.send(bot, chat_id)
         # log.write('ответ отправлен ' + str(answer))
 
