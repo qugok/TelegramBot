@@ -43,9 +43,9 @@ class message:
     def send(self, bot: telegram.Bot, chat_id):
         self.prepare()
         for text in self.texts:
-            # print(len(text), text)
+            print(len(text), text)
             bot.sendMessage(chat_id=chat_id, text=text, **self.options)
-            # print('send')
+            print('send')
 
     def add(self, *texts: str):
         return message(*texts, *self.texts, **self.options)
@@ -90,12 +90,13 @@ class myBot:
 
     def start(self):
         # Начинаем поиск обновлений
-        self.updater.start_polling(clean=True)
+        self.updater.start_polling()
+        # self.updater.start_polling(clean=True)
         # Останавливаем бота, если были нажаты Ctrl + C
         self.updater.idle()
 
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
-        # print("Received", update.message)
+        print("Received", update.message)
         chat_id = str(update.message.chat_id)
         try:
             log.write(
