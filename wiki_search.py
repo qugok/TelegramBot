@@ -58,7 +58,7 @@ class Wiki:
         if self.lang == 'ru':
             date = date.strip()
             if date.strip().isdigit():
-                date = date.strip() + ' год'
+                date = date.strip() + 'й год'
             else:
                 date = date.strip() + ' до н.э'
             wikipedia.set_lang('ru')
