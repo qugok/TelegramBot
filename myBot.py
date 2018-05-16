@@ -133,6 +133,7 @@ class myBot:
             answer = next(self.handlers[chat_id])
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
+        print('sending answer:')
         answer.send(bot, chat_id)
         log.write('ответ отправлен ' + str(answer))
 
