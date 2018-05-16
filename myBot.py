@@ -268,6 +268,7 @@ def send_find_text(text: str, wiki: Wiki):
     request = wiki.find(text)
     print('request code', request)
     if request == 'OK':
+        print(link, link.format(wiki.page.url, text))
         if wiki.suggest is None:
             update = yield message(link.format(wiki.page.url, text), wiki.text,
                 'Вам нужно больше информации?').makeKeyboard([['Да'], ['Нет']])
@@ -275,6 +276,7 @@ def send_find_text(text: str, wiki: Wiki):
             update = yield message('Возможно вы имели ввиду ' + link.format(wiki.page.url, wiki.suggest),wiki.text,'Вам нужно больше информации?').makeKeyboard([['Да'], ['Нет']])
         if str(update.message.text).lower().strip().startswith('да'):
             update = yield message(str(wiki.page.content))
+        print('returning')
         return update
     else:
         update = yield message('Не удалось найти информацию по этому запросу(')
