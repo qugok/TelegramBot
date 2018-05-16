@@ -5,7 +5,7 @@
 import collections
 
 import telegram
-from telegram import replykeyboardremove, ReplyKeyboardMarkup, KeyboardButton, \
+from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, MessageHandler, Filters
 
@@ -37,7 +37,7 @@ def split(message: str):
 class message:
     def __init__(self, *texts, **options):
         self.texts = texts
-        # options.setdefault('reply_markup', replykeyboardremove)
+        options.setdefault('reply_markup', ReplyKeyboardRemove())
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
