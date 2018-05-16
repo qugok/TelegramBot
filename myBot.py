@@ -276,20 +276,41 @@ def send_find_text(text: str, wiki: Wiki):
     request = wiki.find(text)
     print('request code', request)
     if request == 'OK':
-        print(link, link.format(wiki.page.url, text))
-        if wiki.suggest is None:
-            update = yield message(link.format(wiki.page.url, wiki.page.title), wiki.text,
-                'Вам нужно больше информации?', parse_mode='HTML').makeKeyboard([['Да'], ['Нет']])
+        update = yield from print_page(wiki)
+    elif request == 'OPTIONS':
+        update = yield message('что из этого вы имели ввиду?').makeKeyboard([*wiki.maybe])
+        if update.message.text in wiki.maybe:
+            request = wiki.find(update.message.text)
+            if request == 'OK':
+                update = yield from print_page(wiki)
+            else:
+                update = yield message('Не удалось найти информацию по этому запросу(')
         else:
-            update = yield message('Возможно вы имели ввиду ' + link.format(wiki.page.url, wiki.suggest),wiki.text,'Вам нужно больше информации?', parse_mode='HTML').makeKeyboard([['Да'], ['Нет']])
-        if str(update.message.text).lower().strip().startswith('да'):
-            update = yield message(str(wiki.page.content))
-        print('returning')
-        return update
+            update = yield message('Таких вариантов нет(')
     else:
         update = yield message('Не удалось найти информацию по этому запросу(')
-        return update
+    return update
 
+def print_page(wiki :Wiki):
+    # print(link, link.format(wiki.page.url, text))
+    if wiki.suggest is None:
+        update = yield message(link.format(wiki.page.url, wiki.page.title),
+                               wiki.text,
+                               'Вам нужно больше информации?',
+                               parse_mode='HTML').makeKeyboard(
+            [['Да'], ['Нет']])
+    else:
+        update = yield message(
+            'Возможно вы имели ввиду ' + link.format(wiki.page.url,
+                                                     wiki.suggest), wiki.text,
+            'Вам нужно больше информации?', parse_mode='HTML').makeKeyboard(
+            [['Да'], ['Нет']])
+    if str(update.message.text).lower().strip().startswith('да'):
+        update = yield message(str(wiki.page.content))
+    else:
+        update = yield message('Ну как хочешь...')
+    # print('returning')
+    return update
 
 def bad_bot():
     """
