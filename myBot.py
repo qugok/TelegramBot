@@ -204,15 +204,15 @@ def dialog():
                 answer = update.message
                 continue
             year = text.strip()
+            print('find year ' + year)
             wiki.find_date(year)
-            # print('find year ' + year)
-            # print('to send')
-            # print(str(year), wiki.events)
+            print('to send')
+            print(str(year), wiki.events)
             update = yield message(str(wiki.suggest),
                                    *[i + '\n' + j for i, j in
                                      wiki.events])
             answer = update.message
-            # print('send')
+            print('send')
             continue
 
         if 'спасибо' in answer.text.lower():
