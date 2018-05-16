@@ -42,12 +42,12 @@ class message:
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
-        print('start sending')
+        # print('start sending')
         self.prepare()
         for text in self.texts:
-            print(len(text), text)
+            # print(len(text), text)
             bot.sendMessage(chat_id=chat_id, text=text, **self.options)
-            print('send')
+            # print('send')
 
     def add(self, *texts: str):
         return message(*texts, *self.texts, **self.options)
@@ -57,7 +57,7 @@ class message:
         for i in self.texts:
             texts.extend(split(i))
         self.texts = texts
-        print('prepare finished')
+        # print('prepare finished')
 
     def __str__(self):
         return str(self.__dict__)
@@ -69,7 +69,8 @@ class message:
             for j in i:
                 line.append(KeyboardButton(text=j))
         self.options['reply_markup'] = ReplyKeyboardMarkup(new)
-        print('keyboard Made')
+        # print('keyboard Made')
+        return self
 
     def makeInlineKeyboard(self, list):
         new = []
@@ -79,7 +80,7 @@ class message:
                 line.append(
                     InlineKeyboardButton(text=j[0], callback_data=j[1]))
         self.options['reply_markup'] = InlineKeyboardMarkup(new)
-
+        return self
 
 class myBot:
 
@@ -100,7 +101,7 @@ class myBot:
         self.updater.idle()
 
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
-        print("Received", update.message)
+        # print("Received", update.message)
         chat_id = str(update.message.chat_id)
         try:
             log.write(
@@ -133,7 +134,7 @@ class myBot:
             answer = next(self.handlers[chat_id])
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
-        print('sending answer:')
+        # print('sending answer:')
         answer.send(bot, chat_id)
         log.write('ответ отправлен ' + str(answer))
 
