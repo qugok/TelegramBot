@@ -5,6 +5,8 @@
 import collections
 
 import telegram
+from telegram import replykeyboardremove, ReplyKeyboardMarkup, KeyboardButton, \
+    InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, MessageHandler, Filters
 
 import my_read
@@ -15,10 +17,10 @@ log = Log()
 message_size_limit = 4000
 black_list_ids = [75781753]
 
+
 def write_error(user: str, time: str, message: str):
     with open(user + time + '.txt', 'x', encoding='utf-8') as f:
         f.write(message)
-
 
 
 def split(message: str):
@@ -35,14 +37,15 @@ def split(message: str):
 class message:
     def __init__(self, *texts, **options):
         self.texts = texts
+        options.setdefault('reply_markup', replykeyboardremove)
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
         self.prepare()
         for text in self.texts:
-            print(len(text), text)
+            # print(len(text), text)
             bot.sendMessage(chat_id=chat_id, text=text, **self.options)
-            print('send')
+            # print('send')
 
     def add(self, *texts: str):
         return message(*texts, *self.texts, **self.options)
@@ -55,6 +58,23 @@ class message:
 
     def __str__(self):
         return str(self.__dict__)
+
+    def makeKeyboard(self, list):
+        new = []
+        for i in list:
+            line = []
+            for j in i:
+                line.append(KeyboardButton(text=j))
+        self.options['reply_markup'] = ReplyKeyboardMarkup(new)
+
+    def makeInlineKeyboard(self, list):
+        new = []
+        for i in list:
+            line = []
+            for j in i:
+                line.append(
+                    InlineKeyboardButton(text=j[0], callback_data=j[1]))
+        self.options['reply_markup'] = InlineKeyboardMarkup(new)
 
 
 class myBot:
@@ -78,7 +98,9 @@ class myBot:
         # print("Received", update.message)
         chat_id = str(update.message.chat_id)
         try:
-            log.write('получил сообщение ' + str(update.message.text) + ' от ' + str(update.message.from_user.first_name) + '\t id ' + chat_id)
+            log.write(
+                'получил сообщение ' + str(update.message.text) + ' от ' + str(
+                    update.message.from_user.first_name) + '\t id ' + chat_id)
         except:
             pass
         if update.message.text == "/start":
@@ -91,7 +113,7 @@ class myBot:
             # если диалог уже начат, то надо использовать .send(), чтобы
             # передать в генератор ответ пользователя
             try:
-                answer = self.handlers[chat_id].send(update.message)
+                answer = self.handlers[chat_id].send(update)
             except StopIteration:
                 # если при этом генератор закончился -- что делать, начинаем общение с начала
                 del self.handlers[chat_id]
@@ -112,6 +134,8 @@ class myBot:
 
 telegram_token = my_read.read_telegram_token()
 
+link = my_read.read_message('link')
+
 start_message = my_read.read_message('start_message')
 chose_lang_html_text = my_read.read_message('chose_lang_message')
 help_message = my_read.read_message('help_message')
@@ -126,35 +150,33 @@ info_message = message(info_find_message, info_lang_message, info_date_message,
 
 
 def dialog():
-    answer = yield message(start_message)
+    update = yield message(start_message)
+    answer = update.message
     # убираем ведущие знаки пунктуации, оставляем только
     # первую компоненту имени, пишем её с заглавной буквы
     name = answer.text.rstrip(".!").split()[0].capitalize()
     wiki = Wiki(log=log)
-    answer = yield info_message
+    update = yield info_message
+    answer = update.message
     while True:
-        if answer.text.startswith('/find') or answer.text.lower().startswith(
-                'найди'):
-            if answer.text.lower().startswith('найди мне'):
-                text = answer.text[9:]
-            else:
-                text = answer.text[5:]
-            if text.strip(' !.();:') == '':
-                answer = yield message('Введите то, что хотите найти')
+        if answer.text.startswith('/find'):
+            text = answer.text[5:]
+            if text.strip() == '':
+                update = yield message('Введите то, что хотите найти')
+                answer = update.message
                 text = answer.text
-            # print('pre Wiki')
-            # print('find text "' + text+'"')
-            current = message(wiki.fullFind(text))
-            # print('post Wiki')
-            answer = yield current
+            update = yield from send_find_text(text, wiki)
+            answer = update.message
             continue
 
         if answer.text.startswith('/lang'):
-            answer = yield from chose_lang(wiki)
+            update = yield from chose_lang(wiki)
+            answer = update.message
             continue
 
         if answer.text.startswith('/help'):
-            answer = yield info_message
+            update = yield info_message
+            answer = update.message
             continue
 
         if answer.text.startswith('/date') or answer.text.lower().startswith(
@@ -166,50 +188,62 @@ def dialog():
             else:
                 text = answer.text[5:]
             if text.strip(' !.();:') == '':
-                answer = yield message('Введите год')
+                update = yield message('Введите год')
+                answer = update.message
                 text = answer.text
             if not text.strip('годyear нэ.').isdigit():
-                answer = yield message(
+                update = yield message(
                     'Вы ввели не только цифры года, попытайтесь с начала)')
+                answer = update.message
                 continue
             year = text.strip()
             wiki.find_date(year)
-            print('find year ' + year)
-            print('to send')
-            print(str(year), wiki.events)
-            answer = yield message(str(wiki.suggest), *[i + '\n' + j for i, j in
-                                                wiki.events])
+            # print('find year ' + year)
+            # print('to send')
+            # print(str(year), wiki.events)
+            update = yield message(str(wiki.suggest),
+                                   *[i + '\n' + j for i, j in
+                                     wiki.events])
+            answer = update.message
             # print('send')
             continue
 
         if 'спасибо' in answer.text.lower():
-            answer = yield message(
-                'Всегда пожалуйста, %s!\nРад был помочь)' % name,
-                'Всё для тебя - рассветы и туманы,\nДля тебя - моря и океаны,\nДля тебя - цветочные поляны,\nДля тебя, %s!' % name)
+            update = yield message(
+                'Всегда пожалуйста, {}!\nРад был помочь)'.format(name),
+                'Всё для тебя - рассветы и туманы,\nДля тебя - моря и океаны,\nДля тебя - цветочные поляны,\nДля тебя, {}!'.format(
+                    name))
+            answer = update.message
             continue
 
         if 'пожалуйста' in answer.text.lower():
-            answer = yield message(
-                'Вы так просите, %s!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.' % name)
+            update = yield message(
+                'Вы так просите, {}!\nЯ просто не могу отказать\nСделаю всё, что в моих силах.'.format(
+                    name))
+            answer = update.message
             continue
 
         if answer.text.startswith('/error'):
             text = answer.text[6:]
             if text.strip(' !.();:') == '':
-                answer = yield message('Введите ваше сообщение')
+                update = yield message('Введите ваше сообщение')
+                answer = update.message
                 text = answer.text
             write_error(name + answer.from_user.first_name + answer.chat_id,
                         str(answer.date), text)
-            answer = yield message(
+            update = yield message(
                 'Ваше сообщение было успешно сохранено и создатель в скором времени его обязательно прочитает)')
+            answer = update.message
             continue
 
-        answer = yield info_message.add('Я не понимаю что вы написали(',
+        update = yield info_message.add('Я не понимаю что вы написали(',
                                         'Вот вам подсказка,\nЗдесь всё, что я умею\nВы можете её вызвать командой /help\nУдачи!)')
+        answer = update.message
 
 
 def chose_lang(wiki: Wiki):
-    lang = yield chose_lang_message
+    update = yield chose_lang_message
+    lang = update.message
     lang = lang.text
     if lang.lower().startswith('rus') or lang.lower().startswith('рус'):
         code = 'ru'
@@ -226,6 +260,22 @@ def chose_lang(wiki: Wiki):
             'не удалось смениеть язык на' + lang + 'попробуйте что-то другое')
     # print('end')
     return ans
+
+
+def send_find_text(text: str, wiki: Wiki):
+    request = wiki.find(text)
+    if request == 'OK':
+        if wiki.suggest is None:
+            update = yield message(link.format(wiki.page.url, text), wiki.text,
+                'Вам нужно больше информации?').makeKeyboard([['Да'], ['Нет']])
+        else:
+            update = yield message('Возможно вы имели ввиду ' + link.format(wiki.page.url, wiki.suggest),wiki.text,'Вам нужно больше информации?').makeKeyboard([['Да'], ['Нет']])
+        if str(update.message.text).lower().strip().startswith('да'):
+            update = yield message(str(wiki.page.content))
+        return update
+    else:
+        update = yield message('Не удалось найти информацию по этому запросу(')
+        return update
 
 
 def bad_bot():

@@ -8,13 +8,13 @@ from Log import Log
 class Wiki:
 
     def __init__(self, lang: str = 'ru', log: Log = None):
-        self.lang = 'ru'
         self.set_lang(lang)
         self.__log = log
         self.text = None
         self.maybe = []
         self.suggest = None
         self.events = None
+        self.page = None
 
     def log(self, message: str = None):
         if Log is None or message is None:
@@ -39,6 +39,7 @@ class Wiki:
             wikipedia.set_lang(self.lang)
             self.text = wikipedia.summary(query)
             self.suggest = wikipedia.suggest(query)
+            self.page = wikipedia.page(query)
             if self.text == '':
                 self.text = get_facked(query)
             return 'OK'
@@ -80,6 +81,7 @@ class Wiki:
             print(date)
             print(wikipedia.summary(date))
             page = wikipedia.page(date)
+            # page.
             events = re.search(r'(==(?:.|\n)*?)\n== ', page.content)
             events = events.groups()[0]
             events = events.split('\n=== ')
@@ -89,6 +91,7 @@ class Wiki:
             self.events = events
             self.suggest = wikipedia.suggest(date)
             self.suggest = page.title
+            self.page = page
             return events
         except:
             return None
