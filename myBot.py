@@ -68,6 +68,7 @@ class message:
             line = []
             for j in i:
                 line.append(KeyboardButton(text=j))
+            new.append(line)
         self.options['reply_markup'] = ReplyKeyboardMarkup(new)
         # print('keyboard Made')
         return self
@@ -79,6 +80,7 @@ class message:
             for j in i:
                 line.append(
                     InlineKeyboardButton(text=j[0], callback_data=j[1]))
+            new.append(line)
         self.options['reply_markup'] = InlineKeyboardMarkup(new)
         return self
 
@@ -132,7 +134,7 @@ class myBot:
             if chat_id in black_list_ids:
                 self.handlers[chat_id] = bad_bot()
             answer = next(self.handlers[chat_id])
-        answer = message('effdfd').makeKeyboard([['Да']])
+        # answer = message('effdfd').makeKeyboard([['Да']])
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
         # print('sending answer:')
