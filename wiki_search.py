@@ -57,7 +57,9 @@ class Wiki:
     def find_date(self, date: str):
         if self.lang == 'ru':
             date = date.strip()
-            if not date.strip().isdigit():
+            if date.strip().isdigit():
+                date = date.strip() + ' год'
+            else:
                 date = date.strip() + ' до н.э'
             wikipedia.set_lang('ru')
         else:

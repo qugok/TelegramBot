@@ -7,7 +7,7 @@ import collections
 import telegram
 from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import Updater, MessageHandler, CommandHandler, Filters
+from telegram.ext import Updater, MessageHandler, Filters
 
 import my_read
 from wiki_search import Wiki, Log
@@ -85,11 +85,13 @@ class message:
         self.options['reply_markup'] = InlineKeyboardMarkup(new)
         return self
 
+
 class myBot:
 
     def __init__(self, token, generator):
         self.updater = Updater(token=token)  # заводим апдейтера
-        text_handler = MessageHandler(Filters.text | Filters.command, self.handle_message)
+        text_handler = MessageHandler(Filters.text | Filters.command,
+                                      self.handle_message)
         self.updater.dispatcher.add_handler(
             text_handler)  # ставим обработчик всех текстовых сообщений
 
@@ -208,7 +210,14 @@ def dialog():
             print(wiki.find_date(year))
             print('to send')
             print(str(year), wiki.events)
-            print('\n\n\nxxx',*[i + '\n' + j for i, j in wiki.events])
+            try:
+                print('\n\n\nxxx', *[i + '\n' + j for i, j in wiki.events])
+            except:
+                update = yield message('Не удалось найти информацию по этому запросу(')
+                answer = update.message
+                print('send')
+                continue
+
             update = yield message(str(wiki.suggest),
                                    *[i + '\n' + j for i, j in
                                      wiki.events])
@@ -275,20 +284,23 @@ def send_find_text(text: str, wiki: Wiki):
     if request == 'OK':
         update = yield from print_page(wiki)
     elif request == 'OPTIONS':
-        update = yield message('что из этого вы имели ввиду?').makeKeyboard([[i] for i in wiki.maybe])
+        update = yield message('что из этого вы имели ввиду?').makeKeyboard(
+            [[i] for i in wiki.maybe])
         if update.message.text in wiki.maybe:
             request = wiki.find(update.message.text)
             if request == 'OK':
                 update = yield from print_page(wiki)
             else:
-                update = yield message('Не удалось найти информацию по этому запросу(')
+                update = yield message(
+                    'Не удалось найти информацию по этому запросу(')
         else:
             update = yield message('Таких вариантов нет(')
     else:
         update = yield message('Не удалось найти информацию по этому запросу(')
     return update
 
-def print_page(wiki :Wiki):
+
+def print_page(wiki: Wiki):
     # print(link, link.format(wiki.page.url, text))
     if wiki.suggest is None:
         update = yield message(link.format(wiki.page.url, wiki.page.title),
@@ -308,6 +320,7 @@ def print_page(wiki :Wiki):
         update = yield message('Ну как хочешь...')
     # print('returning')
     return update
+
 
 def bad_bot():
     """
