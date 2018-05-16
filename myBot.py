@@ -42,13 +42,13 @@ class message:
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
-        # print('start sending')
+        print('start sending')
         self.prepare()
         for text in self.texts:
-            # print(len(text), text)
+            print(len(text), text)
             if len(text.strip()) != 0:
                 bot.sendMessage(chat_id=chat_id, text=text, **self.options)
-            # print('send')
+            print('send')
 
     def add(self, *texts: str):
         return message(*texts, *self.texts, **self.options)
@@ -205,7 +205,7 @@ def dialog():
                 continue
             year = text.strip()
             print('find year ' + year)
-            wiki.find_date(year)
+            print(wiki.find_date(year))
             print('to send')
             print(str(year), wiki.events)
             update = yield message(str(wiki.suggest),
