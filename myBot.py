@@ -173,7 +173,7 @@ class myBot:
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
         print('sending answer:')
-        answer.send(bot, chat_id)
+        # answer.send(bot, chat_id)
         # log.write('ответ отправлен ' + str(answer))
 
 
