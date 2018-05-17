@@ -172,11 +172,23 @@ class myBot:
             # диалог только начинается. defaultdict запустит новый генератор для этого
             # чатика, а мы должны будем извлечь первое сообщение с помощью .next()
             # (.send() срабатывает только после первого yield)
+            print()
+            print()
             print(update)
+            print()
+            print()
             print(update.message)
+            print()
+            print()
             print(update.message['chat'])
+            print()
+            print()
             print(update.message['chat']['from'])
+            print()
+            print()
             print(update.message['chat']['from']['first_name'])
+            print()
+            print()
             name = update.message['chat']['from']['first_name']
             if chat_id in black_list_ids:
                 self.handlers[chat_id] = bad_bot()
