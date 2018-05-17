@@ -9,6 +9,7 @@ def read_message(message_name: str):
         message = f.read()
     return message
 
+
 def read_weather_token():
     with open('myWeatherToken') as f:
         my_token = f.readline().replace('\n', '')
