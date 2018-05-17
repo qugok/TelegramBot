@@ -111,7 +111,6 @@ class myBot:
         chat_id = str(update.message.chat_id)
         print('sending icon')
         bot.send_photo(chat_id=chat_id, photo=icon, caption='погодка', parse_mode='HTML')
-
         print('sended icon')
         # try:
         #     log.write(
