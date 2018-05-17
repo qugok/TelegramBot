@@ -96,11 +96,15 @@ icon = my_read.read_message('image')
 start_message = my_read.read_message('start_message')
 chose_lang_html_text = my_read.read_message('chose_lang_message')
 help_message = my_read.read_message('help_message')
+
 info_find_message = my_read.read_message('info_find_message')
 info_date_message = my_read.read_message('info_date_message')
 info_lang_message = my_read.read_message('info_lang_message')
-weather_message = my_read.read_message('weather')
+info_weather_message = my_read.read_message('info_weather_message')
+
+weather_message = my_read.read_message('weather_message')
 
 chose_lang_message = Message(chose_lang_html_text, parse_mode='HTML')
 info_message = Message(info_find_message, info_lang_message, info_date_message,
+                       info_weather_message,
                        parse_mode='HTML')

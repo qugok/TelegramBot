@@ -17,6 +17,11 @@ def dialog(name=None):
     update = yield info_message
     answer = update.message
     while True:
+        if answer.text.startswith('/minimize'):
+            weather.minimize = True
+            update = yield Message('Done')
+            answer = update.message
+            continue
         if answer.text.startswith('/find'):
             text = answer.text[5:]
             if text.strip() == '':

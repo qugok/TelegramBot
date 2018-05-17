@@ -33,8 +33,10 @@ class MyBot:
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         chat_id = str(update.message.chat_id)
         if update.message.text == '/black':
-            black_list_ids.append(chat_id)
+            black_list_ids.append(int(chat_id))
             self.handlers.pop(chat_id, None)
+        if update.message.text == '/clear_black':
+            black_list_ids.clear()
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть

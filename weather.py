@@ -5,8 +5,10 @@ from wiki_search import Wiki
 
 token = my_read.read_weather_token()
 
+
 class Weather:
     def __init__(self):
+        self.minimize = False
         self.suggest = None
         self.town = None
         self.status = None
@@ -37,7 +39,9 @@ class Weather:
         self.status = current.get_detailed_status()
         self.icon = current.get_weather_icon_name()
         self.wind = current.get_wind()['speed']
-        self.temperature = tuple(list(current.get_temperature('celsius').values())[0:3])  # (curretn, max, min)
+        self.temperature = tuple(
+            list(current.get_temperature('celsius').values())[
+            0:3])  # (curretn, max, min)
         self.pressure = current.get_pressure()['press']
         self.humidity = current.get_humidity()
         self.town = town
