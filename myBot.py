@@ -204,6 +204,7 @@ def dialog():
     # первую компоненту имени, пишем её с заглавной буквы
     name = answer.text.rstrip(".!").split()[0].capitalize()
     wiki = Wiki(log=log)
+    weather = Weather()
     update = yield info_message
     answer = update.message
     while True:
@@ -244,7 +245,7 @@ def dialog():
                 update = yield message('Введите город')
                 answer = update.message
                 text = answer.text
-            update = yield from weather(text)
+            update = yield from weather(text, weather)
             answer = update.message
             continue
 
