@@ -14,7 +14,7 @@ class Weather:
         self.status = None
         self.icon = None
         self.wind = None
-        self.temperature = None  # (curretn, max, min)
+        self.temperature = None  # curretn
         self.humidity = None
         self.pressure = None
         self.own = pyowm.OWM(API_key=token, language='RU')
@@ -43,9 +43,7 @@ class Weather:
         self.status = current.get_detailed_status()
         self.icon = current.get_weather_icon_name()
         self.wind = current.get_wind()['speed']
-        self.temperature = tuple(
-            list(current.get_temperature('celsius').values())[
-            0:3])  # (curretn, max, min)
+        self.temperature = current.get_temperature('celsius').values()[0] # current
         self.pressure = current.get_pressure()['press']
         self.humidity = current.get_humidity()
         self.town = town

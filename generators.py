@@ -173,7 +173,7 @@ def get_weather(text, weather: Weather, wiki: Wiki = None):
                 'Возможно вы имели ввиду ' + str(weather.suggest).capitalize())
         answer.append(
             weather_message.format(weather.town, weather.status, weather.wind,
-                                   *weather.temperature, weather.humidity,
+                                   weather.temperature, weather.humidity,
                                    weather.pressure))
         update = yield PhotoMessage(*answer, photo=icon.format(weather.icon))
         return update
