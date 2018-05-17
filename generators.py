@@ -60,7 +60,7 @@ def dialog(name=None):
                 answer = update.message
                 text = answer.text
             print('town', text)
-            update = yield from get_weather(text, weather)
+            update = yield from get_weather(text, weather, wiki)
             answer = update.message
             continue
 
@@ -149,7 +149,6 @@ def date(text, wiki: Wiki):
         update = yield Message(
             'Вы ввели не только цифры года, попытайтесь с начала)')
 
-
         return update
     year = text.strip()
     print(wiki.find_date(year))
@@ -165,8 +164,8 @@ def date(text, wiki: Wiki):
     return update
 
 
-def get_weather(text, weather: Weather):
-    request = weather.get_weather(text)
+def get_weather(text, weather: Weather, wiki: Wiki = None):
+    request = weather.get_weather(text, wiki)
     if request == 'OK':
         answer = []
         if weather.suggest is not None:

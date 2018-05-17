@@ -8,6 +8,7 @@ from Log import Log
 class Wiki:
 
     def __init__(self, lang: str = 'ru', log: Log = None):
+        self.lang = 'ru'
         self.set_lang(lang)
         self.__log = log
         self.text = None
@@ -70,13 +71,13 @@ class Wiki:
             else:
                 date = date.strip('донэ.') + ' BC'
             wikipedia.set_lang('en')
-        print(date)
+        # print(date)
         self.events = None
         self.suggest = None
         # return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
         try:
-            print(date)
-            print(wikipedia.summary(date))
+            # print(date)
+            # print(wikipedia.summary(date))
             page = wikipedia.page(date)
             # page.t
             events = re.search(r'(==(?:.|\n)*?)\n== ', page.content)
@@ -96,23 +97,3 @@ class Wiki:
     def __str__(self):
         # return str(self.__dict__)
         return self.text
-
-
-def get_facked(query: str):
-    try:
-        paragraph_pattern = re.compile('.*\n')
-        return paragraph_pattern.match(wikipedia.page(query).content).group()
-    except Exception as e:
-        # print(e)
-        return 'Page not found'
-
-# print("1: Searching Wikipedia for 'Orange'")
-# try:
-#     # pass
-#     print(wikipedia.page('Orange color').summary)
-#     # wikipedia.page('Orange')
-# except wikipedia.exceptions.DisambiguationError as e:
-#     # print(*e.args[-1], sep='\n')
-#     print(e)
-#     print('DisambiguationError: The page name is ambiguous')
-# print()
