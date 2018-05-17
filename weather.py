@@ -1,47 +1,44 @@
 import pyowm
+
 import my_read
+from wiki_search import Wiki
 
 token = my_read.read_weather_token()
-# print(token)
-owm = pyowm.OWM(API_key=token, language='RU')  # You MUST provide a valid API key
 
-# Have a pro subscription? Then use:
-# owm = pyowm.OWM(API_key='your-API-key', subscription_type='pro')
-
-# Search for current weather in London (Great Britain)
-observation = owm.weather_at_place('London,GB')
-w = observation.get_weather()
-pyowm
-print(*w.__dict__.items(), sep='\n')
-print(w._detailed_status)
-owm.set_language('ru')
-observation = owm.weather_at_place('London,GB')
-
-# owm.set_language('ru')
-# observation = owm.weather_at_place('Санкт-Петербург')
-w = observation.get_weather()
-print(w)                      # <Weather - reference time=2013-12-18 09:20,
-                              # status=Clouds>
-print(w.get_status())
-# Weather details
-print(w.get_wind())                 # {'speed': 4.6, 'deg': 330}
-print(w.get_humidity())             # 87
-print(w.get_temperature('celsius')) # {'temp_max': 10.5, 'temp': 9.7, 'temp_min': 9.0}
-
-# Search current weather observations in the surroundings of
-# lat=22.57W, lon=43.12S (Rio de Janeiro, BR)
-observation_list = owm.weather_around_coords(-22.57, -43.12)
-
-
-# def getWeather(town: str) -> :
-#     pass
-
-
-
-
-
-class weather:
+class Weather:
     def __init__(self):
         self.suggest = None
-        self.lang = 'ru'
+        self.town = None
         self.status = None
+        self.icon = None
+        self.wind = None
+        self.temperature = None  # (curretn, max, min)
+        self.humidity = None
+        self.pressure = None
+        self.own = pyowm.OWM(API_key=token, language='RU')
+
+    def get_weather(self, town: str, wiki: Wiki = None):
+        self.suggest = None
+        self.status = None
+        self.icon = None
+        self.wind = None
+        self.temperature = None
+        """
+        (current, max, min)
+        """
+        if wiki is not None:
+            wiki.find(town)
+            self.suggest = wiki.suggest
+            town = self.suggest
+        try:
+            current = self.own.weather_at_place(town).get_weather()
+        except:
+            return 'ERROR'
+        self.status = current.get_detailed_status()
+        self.icon = current.get_weather_icon_name()
+        self.wind = current.get_wind()['speed']
+        self.temperature = tuple(list(current.get_temperature('celsius').values())[0:3])  # (curretn, max, min)
+        self.pressure = current.get_pressure()['press']
+        self.humidity = current.get_humidity()
+        self.town = town
+        return 'OK'

@@ -10,6 +10,7 @@ from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton, \
 from telegram.ext import Updater, MessageHandler, Filters
 
 import my_read
+from weather import Weather
 from wiki_search import Wiki, Log
 
 log = Log()
@@ -86,6 +87,30 @@ class message:
         return self
 
 
+class photoMessage(message):
+
+    def __init__(self, *texts, **options):
+        self.photo = None
+        if 'photo' in options:
+            self.photo = options['photo']
+            options.pop('photo')
+        super().__init__(*texts, **options)
+
+    def send(self, bot: telegram.Bot, chat_id):
+        print('start sending')
+        self.prepare()
+        for text in self.texts[:-1]:
+            print(len(text), text)
+            if len(text.strip()) != 0:
+                bot.sendMessage(chat_id=chat_id, text=text, **self.options)
+            print('send')
+        if len(self.texts) > 0:
+            bot.sendPhoto(chat_id=chat_id, photo=self.photo,
+                          caption=self.texts[-1])
+        else:
+            bot.sendPhoto(chat_id=chat_id, photo=self.photo)
+
+
 class myBot:
 
     def __init__(self, token, generator):
@@ -110,7 +135,10 @@ class myBot:
         # print("Received", update.message)
         chat_id = str(update.message.chat_id)
         print('sending icon')
-        bot.send_photo(chat_id=chat_id, photo=icon, caption='погодка', parse_mode='HTML')
+        bot.send_photo(chat_id=chat_id, photo=icon.format('01d'), caption='погодка',
+                       parse_mode='HTML')
+        print('one send')
+        photoMessage('погодка', photo=icon.format('01d')).send(bot, chat_id)
         print('sended icon')
         # try:
         #     log.write(
@@ -161,6 +189,7 @@ info_find_message = my_read.read_message('info_find_message')
 info_date_message = my_read.read_message('info_date_message')
 info_lang_message = my_read.read_message('info_lang_message')
 # info_error_message = my_read.read_message('info_error_message')
+weather_message = my_read.read_message('weather')
 info_error_message = ''
 # print(info_error_message)
 chose_lang_message = message(chose_lang_html_text, parse_mode='HTML')
@@ -324,6 +353,24 @@ def date(text, wiki: Wiki):
     return update
 
 
+def weather(text, weather: Weather):
+    request = weather.get_weather(text)
+    if request == 'OK':
+        answer = []
+        if weather.suggest is not None:
+            answer.append(
+                'Возможно вы имели ввиду ' + str(weather.suggest).capitalize())
+        answer.append(
+            weather_message.format(weather.town, weather.status, weather.wind,
+                                   *weather.temperature, weather.humidity,
+                                   weather.pressure))
+        update = yield photoMessage(*answer, photo=icon.format(weather.icon))
+        return update
+    else:
+        update = yield message('я не знаю такого города')
+        return update
+
+
 def bad_bot():
     """
     специально для Никиты
@@ -335,10 +382,6 @@ def bad_bot():
         count += 1
         if count % 10 == 0:
             yield message('Тебе не надоело?')
-
-
-def weather(text):
-    pass
 
 
 if __name__ == "__main__":
