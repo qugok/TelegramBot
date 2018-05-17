@@ -109,6 +109,9 @@ class myBot:
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         # print("Received", update.message)
         chat_id = str(update.message.chat_id)
+        print('sending icon')
+        message(icon, parse_mode='HTML').send(bot, chat_id)
+        print('sended icon')
         # try:
         #     log.write(
         #         'получил сообщение ' + str(update.message.text) + ' от ' + str(
@@ -149,6 +152,7 @@ class myBot:
 telegram_token = my_read.read_telegram_token()
 
 link = my_read.read_message('link')
+icon = my_read.read_message('image')
 
 start_message = my_read.read_message('start_message')
 chose_lang_html_text = my_read.read_message('chose_lang_message')
@@ -200,29 +204,19 @@ def dialog():
                 update = yield message('Введите год')
                 answer = update.message
                 text = answer.text
-            if not text.strip('донэ.').isdigit():
-                update = yield message(
-                    'Вы ввели не только цифры года, попытайтесь с начала)')
-                answer = update.message
-                continue
-            year = text.strip()
-            print('find year ' + year)
-            print(wiki.find_date(year))
-            print('to send')
-            print(str(year), wiki.events)
-            try:
-                print('\n\n\nxxx', *[i + '\n' + j for i, j in wiki.events])
-            except:
-                update = yield message('Не удалось найти информацию по этому запросу(')
-                answer = update.message
-                print('send')
-                continue
 
-            update = yield message(str(wiki.suggest),
-                                   *[i + '\n' + j for i, j in
-                                     wiki.events])
+            update = yield from date(text, wiki)
             answer = update.message
-            print('send')
+            continue
+
+        if answer.text.startswith('/weather'):
+            text = answer.text[8:]
+            if text.strip(' !.();:') == '':
+                update = yield message('Введите город')
+                answer = update.message
+                text = answer.text
+            update = yield from weather(text)
+            answer = update.message
             continue
 
         if 'спасибо' in answer.text.lower():
@@ -239,19 +233,6 @@ def dialog():
                     name))
             answer = update.message
             continue
-
-        # if answer.text.startswith('/error'):
-        #     text = answer.text[6:]
-        #     if text.strip(' !.();:') == '':
-        #         update = yield message('Введите ваше сообщение')
-        #         answer = update.message
-        #         text = answer.text
-        #     write_error(name + answer.from_user.first_name + answer.chat_id,
-        #                 str(answer.date), text)
-        #     update = yield message(
-        #         'Ваше сообщение было успешно сохранено и создатель в скором времени его обязательно прочитает)')
-        #     answer = update.message
-        #     continue
 
         update = yield info_message.add('Я не понимаю что вы написали(',
                                         'Вот вам подсказка,\nЗдесь всё, что я умею\nВы можете её вызвать командой /help\nУдачи!)')
@@ -322,6 +303,27 @@ def print_page(wiki: Wiki):
     return update
 
 
+def date(text, wiki: Wiki):
+    if not text.strip('донэ.').isdigit():
+        update = yield message(
+            'Вы ввели не только цифры года, попытайтесь с начала)')
+        return update
+    year = text.strip()
+    print('find year ' + year)
+    print(wiki.find_date(year))
+    print('to send')
+    print(str(year), wiki.events)
+    try:
+        temp = [i + '\n' + j for i, j in wiki.events]
+    except:
+        update = yield message('Не удалось найти информацию по этому запросу(')
+        return update
+    update = yield message(link.format(wiki.page.url, str(wiki.suggest)),
+                           *[i + '\n' + j for i, j in
+                             wiki.events])
+    return update
+
+
 def bad_bot():
     """
     специально для Никиты
@@ -333,6 +335,10 @@ def bad_bot():
         count += 1
         if count % 10 == 0:
             yield message('Тебе не надоело?')
+
+
+def weather(text):
+    pass
 
 
 if __name__ == "__main__":
