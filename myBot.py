@@ -104,11 +104,15 @@ class photoMessage(message):
             if len(text.strip()) != 0:
                 bot.sendMessage(chat_id=chat_id, text=text, **self.options)
             print('send')
-        if len(self.texts) > 0:
-            bot.sendPhoto(chat_id=chat_id, photo=self.photo,
-                          caption=self.texts[-1])
-        else:
-            bot.sendPhoto(chat_id=chat_id, photo=self.photo)
+        try:
+            if len(self.texts) > 0:
+                bot.sendPhoto(chat_id=chat_id, photo=self.photo,
+                              caption=self.texts[-1])
+            else:
+                bot.sendPhoto(chat_id=chat_id, photo=self.photo)
+        except:
+            if len(self.texts) > 0:
+                bot.sendMessage(chat_id=chat_id, text=self.texts[-1])
 
 
 class myBot:
@@ -168,7 +172,7 @@ class myBot:
             # (.send() срабатывает только после первого yield)
             if chat_id in black_list_ids:
                 self.handlers[chat_id] = bad_bot()
-            answer = next(self.handlers[chat_id])
+            answer = next(self.handlers[chat_id]())
         # answer = message('effdfd').makeKeyboard([['Да']])
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
@@ -197,12 +201,17 @@ info_message = message(info_find_message, info_lang_message, info_date_message,
                        info_error_message, parse_mode='HTML')
 
 
-def dialog():
-    update = yield message(start_message)
-    answer = update.message
+def dialog(name=None):
+    if name is not None:
+        update = yield message(start_message).makeKeyboard([['Да'], ['Нет']])
+        answer = update.message
+    if name is None or str(answer).lower().startswith('нет'):
+        update = yield message('Как мне тебя называть?')
+        answer = update.message
+        name = answer.text.rstrip(".!").capitalize()
     # убираем ведущие знаки пунктуации, оставляем только
     # первую компоненту имени, пишем её с заглавной буквы
-    name = answer.text.rstrip(".!").split()[0].capitalize()
+
     wiki = Wiki(log=log)
     weather = Weather()
     update = yield info_message
@@ -340,9 +349,9 @@ def date(text, wiki: Wiki):
             'Вы ввели не только цифры года, попытайтесь с начала)')
         return update
     year = text.strip()
-    print('find year ' + year)
+    # print('find year ' + year)
     print(wiki.find_date(year))
-    print('to send')
+    # print('to send')
     print(str(year), wiki.events)
     try:
         temp = [i + '\n' + j for i, j in wiki.events]
@@ -356,9 +365,9 @@ def date(text, wiki: Wiki):
 
 
 def get_weather(text, weather: Weather):
-    print('start weather')
+    # print('start weather')
     request = weather.get_weather(text)
-    print('request is ', request)
+    # print('request is ', request)
     if request == 'OK':
         answer = []
         if weather.suggest is not None:
@@ -375,7 +384,7 @@ def get_weather(text, weather: Weather):
         return update
 
 
-def bad_bot():
+def bad_bot(name='Никита'):
     """
     специально для Никиты
     :return:
