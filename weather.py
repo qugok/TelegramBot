@@ -28,18 +28,32 @@ class Weather:
         """
         (current, max, min)
         """
-        if wiki is not None:
-            wiki.find(town)
-            if wiki.suggest is not None:
-                self.suggest = wiki.suggest
-                town = self.suggest
-            else:
-                self.suggest = wiki.page.title
-                town = self.suggest
+        ERROR = False
         try:
             current = self.own.weather_at_place(town).get_weather()
         except:
+            ERROR = True
+
+        if ERROR and wiki is not None:
+            try:
+                code = wiki.find(town)
+            except:
+                return 'ERROR'
+            if wiki.suggest is not None:
+                self.suggest = wiki.suggest
+                town = self.suggest
+                ERROR = False
+            elif code == 'OK':
+                self.suggest = wiki.page.title
+                town = self.suggest
+                ERROR = False
+        if ERROR:
             return 'ERROR'
+        else:
+            try:
+                current = self.own.weather_at_place(town).get_weather()
+            except:
+                return 'ERROR'
         self.status = current.get_detailed_status()
         self.icon = current.get_weather_icon_name()
         self.wind = current.get_wind()['speed']
