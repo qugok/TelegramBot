@@ -183,13 +183,10 @@ class myBot:
             print(update.message['chat'])
             print()
             print()
-            print(update.message['chat']['from'])
+            print(update.message['chat']['first_name'])
             print()
             print()
-            print(update.message['chat']['from']['first_name'])
-            print()
-            print()
-            name = update.message['chat']['from']['first_name']
+            name = update.message['chat']['first_name']
             if chat_id in black_list_ids:
                 self.handlers[chat_id] = bad_bot()
             else:
