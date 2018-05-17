@@ -245,7 +245,7 @@ def dialog():
                 update = yield message('Введите город')
                 answer = update.message
                 text = answer.text
-            update = yield from weather(text, weather)
+            update = yield from get_weather(text, weather)
             answer = update.message
             continue
 
@@ -354,7 +354,7 @@ def date(text, wiki: Wiki):
     return update
 
 
-def weather(text, weather: Weather):
+def get_weather(text, weather: Weather):
     request = weather.get_weather(text)
     if request == 'OK':
         answer = []
