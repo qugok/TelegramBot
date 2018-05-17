@@ -134,12 +134,12 @@ class myBot:
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         # print("Received", update.message)
         chat_id = str(update.message.chat_id)
-        print('sending icon')
-        bot.send_photo(chat_id=chat_id, photo=icon.format('01d'), caption='погодка',
-                       parse_mode='HTML')
-        print('one send')
-        photoMessage('погодка', photo=icon.format('01d')).send(bot, chat_id)
-        print('sended icon')
+        # print('sending icon')
+        # bot.send_photo(chat_id=chat_id, photo=icon.format('01d'), caption='погодка',
+        #                parse_mode='HTML')
+        # print('one send')
+        # photoMessage('погодка', photo=icon.format('01d')).send(bot, chat_id)
+        # print('sended icon')
         # try:
         #     log.write(
         #         'получил сообщение ' + str(update.message.text) + ' от ' + str(
@@ -173,7 +173,7 @@ class myBot:
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
         print('sending answer:')
-        # answer.send(bot, chat_id)
+        answer.send(bot, chat_id)
         # log.write('ответ отправлен ' + str(answer))
 
 
