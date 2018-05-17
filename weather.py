@@ -33,6 +33,9 @@ class Weather:
             if wiki.suggest is not None:
                 self.suggest = wiki.suggest
                 town = self.suggest
+            else:
+                self.suggest = wiki.page.title
+                town = self.suggest
         try:
             current = self.own.weather_at_place(town).get_weather()
         except:
