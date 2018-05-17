@@ -143,6 +143,8 @@ def date(text, wiki: Wiki):
     if not text.strip('донэ.').isdigit():
         update = yield Message(
             'Вы ввели не только цифры года, попытайтесь с начала)')
+
+
         return update
     year = text.strip()
     print(wiki.find_date(year))
