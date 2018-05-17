@@ -110,7 +110,7 @@ class myBot:
         # print("Received", update.message)
         chat_id = str(update.message.chat_id)
         print('sending icon')
-        bot.send_photo(icon, parse_mode='HTML')
+        bot.send_photo(icon)
         print('sended icon')
         # try:
         #     log.write(
