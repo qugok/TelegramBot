@@ -154,7 +154,7 @@ def date(text, wiki: Wiki):
         return update
     update = yield Message(link.format(wiki.page.url, str(wiki.suggest)),
                            *[i + '\n' + j for i, j in
-                             wiki.events])
+                             wiki.events], parse_mode='HTML')
     return update
 
 
@@ -184,7 +184,7 @@ def bad_bot(name='Никита'):
     count = 0
     while True:
         yield Message('Я с тобой не разговариваю!',
-                      'вот тебе клавиатура)').make_keyboard(
+                      'вот тебе клавиатура').make_keyboard(
             ['qwertyuiop[]', 'asdfghjkl;', 'zxcvbnm,./'])
         count += 1
         if count % 10 == 0:
