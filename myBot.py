@@ -172,20 +172,20 @@ class myBot:
             # диалог только начинается. defaultdict запустит новый генератор для этого
             # чатика, а мы должны будем извлечь первое сообщение с помощью .next()
             # (.send() срабатывает только после первого yield)
-            print()
-            print()
-            print(update)
-            print()
-            print()
-            print(update.message)
-            print()
-            print()
-            print(update.message['chat'])
-            print()
-            print()
-            print(update.message['chat']['first_name'])
-            print()
-            print()
+            # print()
+            # print()
+            # print(update)
+            # print()
+            # print()
+            # print(update.message)
+            # print()
+            # print()
+            # print(update.message['chat'])
+            # print()
+            # print()
+            # print(update.message['chat']['first_name'])
+            # print()
+            # print()
             name = update.message['chat']['first_name']
             if chat_id in black_list_ids:
                 self.handlers[chat_id] = bad_bot(name)
@@ -224,7 +224,7 @@ def dialog(name=None):
     if name is not None:
         update = yield message(start_message.format(name)).makeKeyboard([['Да'], ['Нет']])
         answer = update.message
-    if name is None or str(answer).lower().startswith('нет'):
+    if name is None or str(answer.text).lower().startswith('нет'):
         update = yield message('Как мне тебя называть?')
         answer = update.message
         name = answer.text.rstrip(".!").capitalize()
