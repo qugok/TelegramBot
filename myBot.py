@@ -188,9 +188,9 @@ class myBot:
             print()
             name = update.message['chat']['first_name']
             if chat_id in black_list_ids:
-                self.handlers[chat_id] = bad_bot()
+                self.handlers[chat_id] = bad_bot(name)
             else:
-                self.handlers[chat_id] = self.generator()
+                self.handlers[chat_id] = self.generator(name)
             answer = next(self.handlers[chat_id])
         # answer = message('effdfd').makeKeyboard([['Да']])
         # отправляем полученный ответ пользователю
