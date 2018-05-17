@@ -123,7 +123,7 @@ class myBot:
                                       self.handle_message)
         self.updater.dispatcher.add_handler(
             text_handler)  # ставим обработчик всех текстовых сообщений
-
+        self.generator = generator
         self.handlers = collections.defaultdict(
             generator)  # заводим мапу "id чата -> генератор"
 
@@ -136,7 +136,9 @@ class myBot:
         self.updater.idle()
 
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
-        # print("Received", update.message)
+        print("Received", update)
+        print()
+        print("Received", update.message)
         chat_id = str(update.message.chat_id)
         # print('sending icon')
         # bot.send_photo(chat_id=chat_id, photo=icon.format('01d'), caption='погодка',
@@ -172,7 +174,9 @@ class myBot:
             # (.send() срабатывает только после первого yield)
             if chat_id in black_list_ids:
                 self.handlers[chat_id] = bad_bot()
-            answer = next(self.handlers[chat_id]())
+            else:
+                self.handlers[chat_id] = self.generator()
+            answer = next(self.handlers[chat_id])
         # answer = message('effdfd').makeKeyboard([['Да']])
         # отправляем полученный ответ пользователю
         # print("Answer: %r" % answer)
@@ -203,7 +207,7 @@ info_message = message(info_find_message, info_lang_message, info_date_message,
 
 def dialog(name=None):
     if name is not None:
-        update = yield message(start_message).makeKeyboard([['Да'], ['Нет']])
+        update = yield message(start_message.format(name)).makeKeyboard([['Да'], ['Нет']])
         answer = update.message
     if name is None or str(answer).lower().startswith('нет'):
         update = yield message('Как мне тебя называть?')
