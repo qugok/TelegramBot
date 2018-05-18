@@ -145,14 +145,14 @@ def print_page(wiki: Wiki):
 
 
 def date(text, wiki: Wiki):
-    if not text.strip('донэ.').isdigit():
+    if not text.strip('донэ. ').isdigit():
         update = yield Message(
-            'Вы ввели не только цифры года, попытайтесь с начала)')
+            'Вы ввели не только цифры года, попытайтесь с начала')
 
         return update
     year = text.strip()
-    print(wiki.find_date(year))
-    print(str(year), wiki.events)
+    # print(wiki.find_date(year))
+    # print(str(year), wiki.events)
     try:
         temp = [i + '\n' + j for i, j in wiki.events]
     except:
@@ -166,6 +166,7 @@ def date(text, wiki: Wiki):
 
 def get_weather(text, weather: Weather, wiki: Wiki = None):
     request = weather.get_weather(text, wiki)
+    print('request code', request)
     if request == 'OK':
         answer = []
         if weather.suggest is not None:
