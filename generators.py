@@ -162,6 +162,9 @@ def date(text, wiki: Wiki):
         return update
     print(temp)
     print(events)
+    if len(temp) <= 1:
+        update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), *[i.capitalize() + '\n' + j for i, j in wiki.events], parse_mode='HTML')
+        return update
     update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), wiki.text, parse_mode='HTML').make_keyboard(temp)
     while 1:
         if update.message.text in temp:
