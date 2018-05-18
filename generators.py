@@ -160,6 +160,7 @@ def date(text, wiki: Wiki):
     except:
         update = yield Message('Не удалось найти информацию по этому запросу(')
         return update
+    print(temp)
     update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), wiki.text, parse_mode='HTML').make_keyboard(temp)
     while 1:
         if update.message.text in temp:
