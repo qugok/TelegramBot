@@ -5,7 +5,7 @@ from telegram.ext import Updater, MessageHandler, Filters
 
 from Message import *
 black_list_ids = [75781753]
-
+my_id = 190016290
 
 class MyBot:
 
@@ -32,6 +32,7 @@ class MyBot:
         self.updater.idle()
 
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
+        print(update)
         chat_id = str(update.message.chat_id)
         if update.message.text == '/block':
             black_list_ids.append(int(chat_id))
@@ -39,8 +40,9 @@ class MyBot:
         if update.message.text == '/unblock':
             black_list_ids.pop(black_list_ids.index(int(chat_id)))
             self.handlers.pop(chat_id, None)
-        if update.message.text == '/clear_black':
+        if update.message.text == '/clear_black' and int(chat_id) == my_id:
             black_list_ids.clear()
+        # if update.message.text.starts
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть
@@ -53,7 +55,6 @@ class MyBot:
                 return self.handle_message(bot, update)
         else:
             name = update.message['chat']['first_name']
-            name = link.format('http://'+chat_id, name)
             if int(chat_id) in black_list_ids:
                 self.handlers[chat_id] = self.bad_generator(name)
             else:
