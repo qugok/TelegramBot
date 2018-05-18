@@ -166,9 +166,9 @@ def date(text, wiki: Wiki):
         print('1 start')
         update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), *[i.capitalize() + '\n' + j for i, j in wiki.events], parse_mode='HTML')
         return update
-    update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), str(wiki.text), parse_mode='HTML').make_keyboard(temp)
+    update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), str(wiki.text), parse_mode='HTML').make_keyboard(temp + [['Это всё, что я хотел узнать']])
     while 1:
-        if update.message.text in temp:
+        if update.message.text in events:
             update = yield Message(events[update.message.text], parse_mode='HTML').make_keyboard(temp + [['Это всё, что я хотел узнать']])
             continue
         break
