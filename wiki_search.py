@@ -42,7 +42,7 @@ class Wiki:
             self.suggest = wikipedia.suggest(query)
             self.page = wikipedia.page(query)
             if self.text == '':
-                self.text = get_facked(query)
+                self.text = self.page.content
             return 'OK'
         except wikipedia.exceptions.DisambiguationError as e:
             # print('Too many options')
@@ -90,6 +90,7 @@ class Wiki:
             self.suggest = wikipedia.suggest(date)
             self.suggest = page.title
             self.page = page
+            self.text = page.summary
             return events
         except:
             return None

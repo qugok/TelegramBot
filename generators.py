@@ -59,7 +59,7 @@ def dialog(name=None):
                 update = yield Message('Введите город')
                 answer = update.message
                 text = answer.text
-            print('town', text)
+            # print('town', text)
             update = yield from get_weather(text, weather, wiki)
             answer = update.message
             continue
@@ -104,7 +104,7 @@ def chose_lang(wiki: Wiki):
 
 def send_find_text(text: str, wiki: Wiki):
     request = wiki.find(text)
-    print('request code', request)
+    # print('request code', request)
     if request == 'OK':
         update = yield from print_page(wiki)
     elif request == 'OPTIONS':
@@ -160,10 +160,10 @@ def date(text, wiki: Wiki):
     except:
         update = yield Message('Не удалось найти информацию по этому запросу(')
         return update
-    print(temp)
+    # print(temp)
     # print(events)
     if len(temp) <= 1:
-        print('1 start')
+        # print('1 start')
         update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), *[i.capitalize() + '\n' + j for i, j in wiki.events], parse_mode='HTML')
         return update
     update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), str(wiki.text), parse_mode='HTML').make_keyboard(temp + [['Это всё, что я хотел узнать']])
@@ -177,9 +177,9 @@ def date(text, wiki: Wiki):
 
 
 def get_weather(text, weather: Weather, wiki: Wiki = None):
-    print('start finding')
+    # print('start finding')
     request = weather.get_weather(text, wiki)
-    print('request code', request)
+    # print('request code', request)
     if request == 'OK':
         answer = []
         if weather.suggest is not None:
