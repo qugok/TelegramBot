@@ -4,7 +4,8 @@ import telegram
 from telegram.ext import Updater, MessageHandler, Filters
 
 from Message import *
-black_list_ids = [75781753]
+black_list_usernames = []
+other_users = []
 my_id = 190016290
 
 class MyBot:
@@ -33,15 +34,26 @@ class MyBot:
 
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         print(update)
+        user = update.message['chat']['username']
         chat_id = str(update.message.chat_id)
+        if user in black_list_usernames and user in other_users:
+            other_users.remove(user)
+            self.handlers.pop(chat_id, None)
         if update.message.text == '/block':
-            black_list_ids.append(int(chat_id))
+            black_list_usernames.append(user)
             self.handlers.pop(chat_id, None)
+        elif str(update.message.text).startswith('/block') and int(chat_id) == my_id:
+            black_list_usernames.extend(str(update.message.text).split()[1:])
         if update.message.text == '/unblock':
-            black_list_ids.pop(black_list_ids.index(int(chat_id)))
+            black_list_usernames.remove(user)
             self.handlers.pop(chat_id, None)
+        elif str(update.message.text).startswith('/unblock') and int(chat_id) == my_id:
+            try:
+                black_list_usernames.remove((update.message.text).split()[-1])
+            except:
+                pass
         if update.message.text == '/clear_black' and int(chat_id) == my_id:
-            black_list_ids.clear()
+            black_list_usernames.clear()
         # if update.message.text.starts
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
@@ -55,10 +67,11 @@ class MyBot:
                 return self.handle_message(bot, update)
         else:
             name = update.message['chat']['first_name']
-            if int(chat_id) in black_list_ids:
+            if user in black_list_usernames:
                 self.handlers[chat_id] = self.bad_generator(name)
             else:
                 self.handlers[chat_id] = self.generator(name)
+                other_users.append(user)
             answer = next(self.handlers[chat_id])
         # отправляем полученный ответ пользователю
         answer.send(bot, chat_id)
