@@ -32,7 +32,7 @@ class MyBot:
 
     def handle_message(self, bot: telegram.Bot, update: telegram.Update):
         chat_id = str(update.message.chat_id)
-        if update.message.text == '/black':
+        if update.message.text == '/block':
             black_list_ids.append(int(chat_id))
             self.handlers.pop(chat_id, None)
         if update.message.text == '/clear_black':
