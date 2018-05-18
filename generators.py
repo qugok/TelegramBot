@@ -165,6 +165,7 @@ def date(text, wiki: Wiki):
 
 
 def get_weather(text, weather: Weather, wiki: Wiki = None):
+    print('start finding')
     request = weather.get_weather(text, wiki)
     print('request code', request)
     if request == 'OK':
