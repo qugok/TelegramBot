@@ -35,6 +35,9 @@ class MyBot:
         if update.message.text == '/block':
             black_list_ids.append(int(chat_id))
             self.handlers.pop(chat_id, None)
+        if update.message.text == '/unblock':
+            black_list_ids.pop(int(chat_id))
+            self.handlers.pop(chat_id, None)
         if update.message.text == '/clear_black':
             black_list_ids.clear()
             self.handlers.pop(chat_id, None)
