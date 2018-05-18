@@ -57,7 +57,8 @@ class Weather:
         self.status = current.get_detailed_status()
         self.icon = current.get_weather_icon_name()
         self.wind = current.get_wind()['speed']
-        self.temperature = current.get_temperature('celsius')['temp']  # current
+        self.temperature = current.get_temperature('celsius')[
+            'temp']  # current
         self.pressure = current.get_pressure()['press']
         self.humidity = current.get_humidity()
         self.town = town

@@ -68,7 +68,8 @@ class Wiki:
             events = re.search(r'(==(?:.|\n)*?)\n== ', page.content)
             events = events.groups()[0]
             events = events.split('\n=== ')
-            events = [tuple([j.strip() for j in i.split('=') if j != '']) for i in events if 'См. также' not in i]
+            events = [tuple([j.strip() for j in i.split('=') if j != '']) for i
+                      in events if 'См. также' not in i]
             if events[0][1] == '':
                 events.pop(0)
             self.events = events

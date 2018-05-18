@@ -5,8 +5,9 @@ from wiki_search import Wiki
 
 def dialog(name=None):
     if name is not None:
-        update = yield Message(start_message.format(name), parse_mode='HTML').make_keyboard(
-        # update = yield Message(start_message.format(name)).make_keyboard(
+        update = yield Message(start_message.format(name),
+                               parse_mode='HTML').make_keyboard(
+            # update = yield Message(start_message.format(name)).make_keyboard(
             [['Да'], ['Нет']])
         answer = update.message
     if name is None or str(answer.text).lower().startswith('нет'):
@@ -206,7 +207,6 @@ def bad_bot(name='Никита'):
     """
     count = 0
     while count < 10:
-
         yield Message('Я с тобой не разговариваю!')
         count += 1
     yield Message('Тебе не надоело?').make_keyboard([['Да'], ['Нет']])
