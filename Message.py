@@ -26,11 +26,8 @@ class Message:
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
-        # print('start preparing')
         self.prepare()
-        # print('end preparing')
         for text in self.texts:
-            # print(len(text), text)
             if len(text.strip()) != 0:
                 bot.sendMessage(chat_id=chat_id, text=text, **self.options)
 
@@ -54,7 +51,6 @@ class Message:
                 line.append(KeyboardButton(text=j))
             new.append(line)
         self.options['reply_markup'] = ReplyKeyboardMarkup(new)
-        # print('keyboard done')
         return self
 
     def make_inline_keyboard(self, list):

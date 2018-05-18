@@ -59,7 +59,6 @@ def dialog(name=None):
                 update = yield Message('Введите город')
                 answer = update.message
                 text = answer.text
-            # print('town', text)
             update = yield from get_weather(text, weather, wiki)
             answer = update.message
             continue
@@ -98,13 +97,11 @@ def chose_lang(wiki: Wiki):
     else:
         ans = yield Message(
             'Не удалось смениеть язык на ' + lang.capitalize() + ' попробуйте что-то другое')
-    # print('end')
     return ans
 
 
 def send_find_text(text: str, wiki: Wiki):
     request = wiki.find(text)
-    # print('request code', request)
     if request == 'OK':
         update = yield from print_page(wiki)
     elif request == 'OPTIONS':
@@ -153,17 +150,13 @@ def date(text, wiki: Wiki):
         return update
     year = text.strip()
     wiki.find_date(year)
-    # print(str(year), wiki.events)
     try:
         temp = [[i.capitalize()] for i, j in wiki.events]
         events = {i.capitalize(): j for i, j in wiki.events}
     except:
         update = yield Message('Не удалось найти информацию по этому запросу(')
         return update
-    # print(temp)
-    # print(events)
     if len(temp) <= 1:
-        # print('1 start')
         update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), *[i.capitalize() + '\n' + j for i, j in wiki.events], parse_mode='HTML')
         return update
     update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), str(wiki.text), parse_mode='HTML').make_keyboard(temp + [['Это всё, что я хотел узнать']])
@@ -177,9 +170,7 @@ def date(text, wiki: Wiki):
 
 
 def get_weather(text, weather: Weather, wiki: Wiki = None):
-    # print('start finding')
     request = weather.get_weather(text, wiki)
-    # print('request code', request)
     if request == 'OK':
         answer = []
         if weather.suggest is not None:
@@ -192,7 +183,11 @@ def get_weather(text, weather: Weather, wiki: Wiki = None):
         update = yield PhotoMessage(*answer, photo=icon.format(weather.icon))
         return update
     else:
-        update = yield Message('я не знаю такого города')
+        if wiki.lang.lower() != 'en':
+            update = yield Message('я не знаю такого города', 'попробуте написать название города по английски\nЭто будет работать лучше, если поменять язык на английский')
+        else:
+            update = yield Message('я не знаю такого города',
+                                   'попробуйте написать через ",", например London,UK')
         return update
 
 

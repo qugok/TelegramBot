@@ -36,7 +36,6 @@ class Wiki:
     def find(self, query: str):
         self.suggest = None
         try:
-            # print('start finding')
             wikipedia.set_lang(self.lang)
             self.text = wikipedia.summary(query)
             self.suggest = wikipedia.suggest(query)
@@ -45,13 +44,11 @@ class Wiki:
                 self.text = self.page.content
             return 'OK'
         except wikipedia.exceptions.DisambiguationError as e:
-            # print('Too many options')
             self.maybe = e.options
             self.text = 'Too many options\nPlease more definitely'
             return 'OPTIONS'
             # raise e
         except wikipedia.exceptions.PageError:
-            # print('not found')
             self.text = 'Page not found'
             return None
 
@@ -71,13 +68,10 @@ class Wiki:
             else:
                 date = date.strip('донэ.') + ' BC'
             wikipedia.set_lang('en')
-        # print(date)
         self.events = None
         self.suggest = None
         # return 'Простите, данный сервис сейчас не доступен(\nПопробуйте что-нибудь другое'
         try:
-            # print(date)
-            # print(wikipedia.summary(date))
             page = wikipedia.page(date)
             # page.t
             events = re.search(r'(==(?:.|\n)*?)\n== ', page.content)

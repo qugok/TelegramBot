@@ -20,7 +20,6 @@ class Weather:
         self.own = pyowm.OWM(API_key=token, language='RU')
 
     def get_weather(self, town: str, wiki: Wiki = None):
-        print(town, 'Town')
         self.suggest = None
         self.status = None
         self.icon = None
@@ -33,7 +32,6 @@ class Weather:
         try:
             current = self.own.weather_at_place(town).get_weather()
         except:
-            print('first error')
             ERROR = True
 
         if ERROR and wiki is not None:
@@ -49,16 +47,13 @@ class Weather:
                 self.suggest = wiki.page.title
                 town = self.suggest
                 ERROR = False
-            print('wiki found', town)
         if ERROR:
             return 'ERROR'
         else:
             try:
                 current = self.own.weather_at_place(town).get_weather()
             except:
-                print('final error')
                 return 'ERROR'
-        print('errors are in the past')
         self.status = current.get_detailed_status()
         self.icon = current.get_weather_icon_name()
         self.wind = current.get_wind()['speed']

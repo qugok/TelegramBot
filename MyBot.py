@@ -55,5 +55,4 @@ class MyBot:
                 self.handlers[chat_id] = self.generator(name)
             answer = next(self.handlers[chat_id])
         # отправляем полученный ответ пользователю
-        print('sending answer')
         answer.send(bot, chat_id)
