@@ -5,7 +5,7 @@ from wiki_search import Wiki
 
 def dialog(name=None):
     if name is not None:
-        update = yield Message(start_message.format(name)).make_keyboard(
+        update = yield Message(start_message.format(name), parse_mode='HTML').make_keyboard(
             [['Да'], ['Нет']])
         answer = update.message
     if name is None or str(answer.text).lower().startswith('нет'):
@@ -157,12 +157,18 @@ def date(text, wiki: Wiki):
         update = yield Message('Не удалось найти информацию по этому запросу(')
         return update
     if len(temp) <= 1:
-        update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), *[i.capitalize() + '\n' + j for i, j in wiki.events], parse_mode='HTML')
+        update = yield Message(link.format(wiki.page.url, str(wiki.suggest)),
+                               *[i.capitalize() + '\n' + j for i, j in
+                                 wiki.events], parse_mode='HTML')
         return update
-    update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), str(wiki.text), parse_mode='HTML').make_keyboard(temp + [['Это всё, что я хотел узнать']])
+    update = yield Message(link.format(wiki.page.url, str(wiki.suggest)),
+                           str(wiki.text), parse_mode='HTML').make_keyboard(
+        temp + [['Это всё, что я хотел узнать']])
     while 1:
         if update.message.text in events:
-            update = yield Message(events[update.message.text], parse_mode='HTML').make_keyboard(temp + [['Это всё, что я хотел узнать']])
+            update = yield Message(events[update.message.text],
+                                   parse_mode='HTML').make_keyboard(
+                temp + [['Это всё, что я хотел узнать']])
             continue
         break
     update = yield Message('Ну ок')
@@ -184,7 +190,8 @@ def get_weather(text, weather: Weather, wiki: Wiki = None):
         return update
     else:
         if wiki.lang.lower() != 'en':
-            update = yield Message('я не знаю такого города', 'попробуте написать название города по английски\nЭто будет работать лучше, если поменять язык на английский')
+            update = yield Message('я не знаю такого города',
+                                   'попробуте написать название города по английски\nЭто будет работать лучше, если поменять язык на английский')
         else:
             update = yield Message('я не знаю такого города',
                                    'попробуйте написать через ",", например London,UK')
@@ -197,10 +204,9 @@ def bad_bot(name='Никита'):
     :return:
     """
     count = 0
-    while True:
+    while count < 10:
         yield Message('Я с тобой не разговариваю!',
                       'вот тебе клавиатура').make_keyboard(
-            ['qwertyuiop[]', 'asdfghjkl;', 'zxcvbnm,./'])
+            [[i] for i in name.split()])
         count += 1
-        if count % 10 == 0:
-            yield Message('Тебе не надоело?').make_keyboard([['Да'], ['Нет']])
+    yield Message('Тебе не надоело?').make_keyboard([['Да'], ['Нет']])

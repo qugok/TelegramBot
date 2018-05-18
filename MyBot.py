@@ -3,6 +3,7 @@ import collections
 import telegram
 from telegram.ext import Updater, MessageHandler, Filters
 
+from Message import *
 black_list_ids = [75781753]
 
 
@@ -40,7 +41,6 @@ class MyBot:
             self.handlers.pop(chat_id, None)
         if update.message.text == '/clear_black':
             black_list_ids.clear()
-            self.handlers.pop(chat_id, None)
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть
@@ -53,6 +53,7 @@ class MyBot:
                 return self.handle_message(bot, update)
         else:
             name = update.message['chat']['first_name']
+            name = link.format(chat_id, name)
             if int(chat_id) in black_list_ids:
                 self.handlers[chat_id] = self.bad_generator(name)
             else:
