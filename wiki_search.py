@@ -2,26 +2,17 @@ import re
 
 import wikipedia
 
-from Log import Log
-
 
 class Wiki:
 
-    def __init__(self, lang: str = 'ru', log: Log = None):
+    def __init__(self, lang: str = 'ru'):
         self.lang = 'ru'
         self.set_lang(lang)
-        self.__log = log
         self.text = None
         self.maybe = []
         self.suggest = None
         self.events = None
         self.page = None
-
-    def log(self, message: str = None):
-        if Log is None or message is None:
-            pass
-        else:
-            self.__log.write(message)
 
     def set_lang(self, lang: str = 'ru'):
         try:
