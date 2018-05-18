@@ -108,8 +108,9 @@ def send_find_text(text: str, wiki: Wiki):
     if request == 'OK':
         update = yield from print_page(wiki)
     elif request == 'OPTIONS':
+        temp = [i.lower() for i in wiki.maybe]
         update = yield Message('что из этого вы имели ввиду?').make_keyboard(
-            [[i] for i in wiki.maybe])
+            [[i.capitalize()] for i in temp if temp.count(i) == 1])
         if update.message.text in wiki.maybe:
             request = wiki.find(update.message.text)
             if request == 'OK':
@@ -151,16 +152,21 @@ def date(text, wiki: Wiki):
 
         return update
     year = text.strip()
-    # print(wiki.find_date(year))
+    wiki.find_date(year)
     # print(str(year), wiki.events)
     try:
-        temp = [i + '\n' + j for i, j in wiki.events]
+        temp = [[i.capitalize()] for i, j in wiki.events]
+        events = {i.capitalize(): j for i, j in wiki.events}
     except:
         update = yield Message('Не удалось найти информацию по этому запросу(')
         return update
-    update = yield Message(link.format(wiki.page.url, str(wiki.suggest)),
-                           *[i + '\n' + j for i, j in
-                             wiki.events], parse_mode='HTML')
+    update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), wiki.text, parse_mode='HTML').make_keyboard(temp + [['Это всё, что я хотел узнать']])
+    while 1:
+        if update.message.text in temp:
+            update = yield Message(events[update.message.text], parse_mode='HTML').make_keyboard(temp + [['Это всё, что я хотел узнать']])
+            continue
+        break
+    update = yield Message('Ну ок')
     return update
 
 
