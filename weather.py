@@ -49,6 +49,7 @@ class Weather:
                 self.suggest = wiki.page.title
                 town = self.suggest
                 ERROR = False
+            print('wiki found', town)
         if ERROR:
             return 'ERROR'
         else:
