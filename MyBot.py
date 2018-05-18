@@ -37,6 +37,7 @@ class MyBot:
             self.handlers.pop(chat_id, None)
         if update.message.text == '/clear_black':
             black_list_ids.clear()
+            self.handlers.pop(chat_id, None)
         if update.message.text == "/start":
             # если передана команда /start, начинаем всё с начала -- для
             # этого удаляем состояние текущего чатика, если оно есть
