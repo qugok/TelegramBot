@@ -49,7 +49,7 @@ class MyBot:
                 return self.handle_message(bot, update)
         else:
             name = update.message['chat']['first_name']
-            if chat_id in black_list_ids:
+            if int(chat_id) in black_list_ids:
                 self.handlers[chat_id] = self.bad_generator(name)
             else:
                 self.handlers[chat_id] = self.generator(name)
