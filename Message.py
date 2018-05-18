@@ -26,7 +26,9 @@ class Message:
         self.options = options
 
     def send(self, bot: telegram.Bot, chat_id):
+        print('start preparing')
         self.prepare()
+        print('end preparing')
         for text in self.texts:
             print(len(text), text)
             if len(text.strip()) != 0:

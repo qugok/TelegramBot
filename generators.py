@@ -161,7 +161,7 @@ def date(text, wiki: Wiki):
         update = yield Message('Не удалось найти информацию по этому запросу(')
         return update
     print(temp)
-    print(events)
+    # print(events)
     if len(temp) <= 1:
         print('1 start')
         update = yield Message(link.format(wiki.page.url, str(wiki.suggest)), *[i.capitalize() + '\n' + j for i, j in wiki.events], parse_mode='HTML')
