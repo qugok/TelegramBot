@@ -45,8 +45,9 @@ class MyBot:
         elif str(update.message.text).startswith('/block') and int(chat_id) == my_id:
             black_list_usernames.extend(str(update.message.text).split()[1:])
         if update.message.text == '/unblock':
-            black_list_usernames.remove(user)
-            self.handlers.pop(chat_id, None)
+            # black_list_usernames.remove(user)
+            # self.handlers.pop(chat_id, None)
+            pass
         elif str(update.message.text).startswith('/unblock') and int(chat_id) == my_id:
             try:
                 black_list_usernames.remove((update.message.text).split()[-1])

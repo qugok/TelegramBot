@@ -206,8 +206,7 @@ def bad_bot(name='Никита'):
     """
     count = 0
     while count < 10:
-        yield Message('Я с тобой не разговариваю!',
-                      'вот тебе клавиатура').make_keyboard(
-            [[i] for i in name.split()])
+
+        yield Message('Я с тобой не разговариваю!')
         count += 1
     yield Message('Тебе не надоело?').make_keyboard([['Да'], ['Нет']])
